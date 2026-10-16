@@ -57,4 +57,14 @@ class WorkOrder extends Model
     {
         return $this->hasMany(GateOverride::class);
     }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
 }
