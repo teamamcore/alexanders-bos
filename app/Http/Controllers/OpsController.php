@@ -10,12 +10,16 @@ use App\Actions\Invoicing\GenerateInvoiceFromWorkOrder;
 use App\Actions\Invoicing\MarkInvoicePaid;
 use App\Actions\Invoicing\SyncInvoiceToQuickBooks;
 use App\Actions\Invoicing\VoidInvoice;
+use App\Actions\Proposals\ConvertProposalToJob;
+use App\Actions\Proposals\CreateProposal;
+use App\Actions\Proposals\MoveProposalStage;
 use App\Actions\Time\ClockIn;
 use App\Actions\Time\ClockOut;
 use App\Actions\Time\PayForTimeEntry;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Job;
+use App\Models\Proposal;
 use App\Models\TimeEntry;
 use App\Models\WorkOrder;
 use DomainException;
@@ -114,5 +118,56 @@ class OpsController extends Controller
         ClockOut::run($timeEntry);
 
         return back()->with('status', 'Clocked out.');
+    }
+
+    // ---- Proposals (3.5) -------------------------------------------------
+
+    public function proposals(): View
+    {
+        return view('ops.proposals', [
+            'proposals' => Proposal::with(['customer', 'convertedJob'])->latest()->get(),
+            'customers' => Customer::orderBy('name')->get(),
+        ]);
+    }
+
+    public function createProposal(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'customer_id' => ['required', 'integer'],
+            'title' => ['required', 'string'],
+            'amount' => ['nullable', 'numeric'],
+        ]);
+
+        $customer = Customer::findOrFail($data['customer_id']);
+        $lineItems = isset($data['amount'])
+            ? [['description' => $data['title'], 'amount' => (float) $data['amount']]]
+            : [];
+
+        $proposal = CreateProposal::run($customer, $data['title'], $lineItems);
+
+        return back()->with('status', "Proposal “{$proposal->title}” created.");
+    }
+
+    public function moveProposalStage(Request $request, Proposal $proposal): RedirectResponse
+    {
+        try {
+            MoveProposalStage::run($proposal, (string) $request->input('stage'));
+
+            return back()->with('status', "Proposal moved to {$request->input('stage')}.");
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function convertProposal(Proposal $proposal): RedirectResponse
+    {
+        try {
+            $job = ConvertProposalToJob::run($proposal);
+
+            return redirect()->route('jobs.show', $job)
+                ->with('status', "Converted to job {$job->number} — created from proposal #{$proposal->id}.");
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\Proposal;
 use App\Models\TimeEntry;
 use App\Models\User;
 use App\Models\WorkOrder;
@@ -42,4 +44,21 @@ it('clocks in and out through the UI', function () {
     $open = TimeEntry::withoutGlobalScopes()->whereNull('ended_at')->firstOrFail();
     $this->post(route('time.clockout', $open))->assertRedirect();
     expect($open->fresh()->ended_at)->not->toBeNull();
+});
+
+it('creates and converts a proposal into a job through the UI', function () {
+    $customer = Customer::withoutGlobalScopes()->firstOrFail();
+
+    $this->post(route('proposals.store'), [
+        'customer_id' => $customer->id, 'title' => 'UI Proposal', 'amount' => 500,
+    ])->assertRedirect();
+
+    $p = Proposal::withoutGlobalScopes()->firstOrFail();
+    expect($p->title)->toBe('UI Proposal');
+
+    $this->post(route('proposals.convert', $p))->assertRedirect();
+    expect($p->fresh()->converted_job_id)->not->toBeNull()
+        ->and($p->fresh()->stage)->toBe('won');
+
+    $this->get('/proposals')->assertOk()->assertSee('UI Proposal');
 });

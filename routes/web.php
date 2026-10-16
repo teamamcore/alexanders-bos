@@ -16,6 +16,12 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('jobs/{job}', 'pages.jobs.show')->name('jobs.show');
     Volt::route('schedule', 'pages.schedule.index')->name('schedule.index');
 
+    // Module 3.5 — Proposals & Estimating
+    Route::get('proposals', [OpsController::class, 'proposals'])->name('proposals.index');
+    Route::post('proposals', [OpsController::class, 'createProposal'])->name('proposals.store');
+    Route::post('proposals/{proposal}/stage', [OpsController::class, 'moveProposalStage'])->name('proposals.stage');
+    Route::post('proposals/{proposal}/convert', [OpsController::class, 'convertProposal'])->name('proposals.convert');
+
     // Module 3.6 — Invoicing
     Route::get('invoices', [OpsController::class, 'invoices'])->name('invoices.index');
     Route::post('work-orders/{workOrder}/invoice', [OpsController::class, 'generateInvoice'])->name('invoices.generate');

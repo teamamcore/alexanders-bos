@@ -18,4 +18,9 @@ class Proposal extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function convertedJob(): BelongsTo
+    {
+        return $this->belongsTo(Job::class, 'converted_job_id');
+    }
 }
