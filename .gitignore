@@ -28,3 +28,4 @@ Thumbs.db
 
 # local SQLite database
 /database/database.sqlite
+/storage/phpstan
