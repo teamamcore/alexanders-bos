@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // SOW §3.5 Proposals & §3.6 Invoicing. NOTE: no card/bank fields (MSA Ex. B.2).
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('proposals', function (Blueprint $t) {

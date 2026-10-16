@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // SOW §3.3 — Scheduling & Dispatch (crews) + reschedule history.
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('crews', function (Blueprint $t) {

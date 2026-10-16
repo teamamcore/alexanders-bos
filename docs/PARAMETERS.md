@@ -105,7 +105,33 @@ Batsons University training content; location-based time verification; vendor
 portals beyond 5; devices/data plans; third-party licenses (QuickBooks); payroll
 processing; legal/tax/accounting advice; data migration beyond 4 years / paper records.
 
-## 10. Status
-Prototype scaffold covers the **data model + guardrails** for modules 3.1–3.14, 3.16.
-Business logic, UI, and integrations are stubs/TODO. See `config/batsons.php`
-`modules` map and the "Batsons SOW" tracker.
+## 10. Ownership & Deliverables (MSA v6, 10/16/2026 — "Commissioned Software Development")
+The engagement is a commissioned-development model with a **hybrid IP split**:
+- **§6.1 — Client Deliverables (Client-owned):** the Batsons-specific software +
+  **its source code**, all Client Data, and proprietary pricing/rate/cost data.
+  On **full payment of development fees, AmCore assigns** all IP in the Client
+  Deliverables to the Client.
+- **§6.2 — AmCore Technology (AmCore-owned, reusable):** architecture, frameworks,
+  generic modules, workflows, algorithms, know-how. AmCore may reuse/commercialize
+  it for other clients and grants the Client a **perpetual, royalty-free license**
+  to use it *as part of operating the Client Deliverables* (no separate resale).
+- **§2.8 — Handover on exit:** on termination-for-cause or a move to a third-party
+  maintainer, AmCore delivers **source code + deployment docs + Client-specific
+  admin credentials** (not AmCore's shared infrastructure).
+- **§11.3 — Export includes source-code repositories** (30-day window), not only
+  CSV/PDF data; **§11.4** adds business-continuity code/deployment handover.
+- **§5.5 — Restriction:** Client may not reverse-engineer AmCore's underlying
+  platform architecture (excluding Client's own custom code).
+
+**Build implications:**
+- Keep this a **clean, self-contained, deliverable repo** (it is the deliverable).
+- Keep reusable "AmCore core" patterns **generic** (tenancy, audit, states,
+  guards) so they stay §6.2 technology and could later lift into a shared package.
+- Keep Batsons-specific config/schema/UI clearly the **§6.1 deliverable**.
+- Plan a **code + data export / credential-handover** path (operational TODO).
+
+## 11. Status
+Prototype scaffold covers the **data model + guardrails** for modules 3.1–3.14, 3.16,
+plus a 3.1→3.2 vertical slice (Actions + work-order state machine). Remaining
+business logic, UI, and integrations are TODO. See `config/batsons.php` `modules`
+map and the "Batsons SOW" tracker.
