@@ -12,7 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Bind current tenant/user on every web request (tenant isolation).
+        $middleware->web(append: [
+            \App\Http\Middleware\SetCurrentTenant::class,
+        ]);
+        // Role guard alias (SOW §3.13).
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
