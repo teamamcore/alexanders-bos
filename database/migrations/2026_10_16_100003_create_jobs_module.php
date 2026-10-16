@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // SOW §3.2 — Jobs & Work Orders (+ gates).
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('jobs_records', function (Blueprint $t) {

@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // SOW §3.7 — Parts & Inventory, Billable Equipment, Fleet.
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('suppliers', function (Blueprint $t) {
@@ -93,7 +95,7 @@ return new class extends Migration {
 
     public function down(): void
     {
-        foreach (['vehicle_maintenance','vehicles','equipment_maintenance','equipment','stock_adjustments','parts','suppliers'] as $tbl) {
+        foreach (['vehicle_maintenance', 'vehicles', 'equipment_maintenance', 'equipment', 'stock_adjustments', 'parts', 'suppliers'] as $tbl) {
             Schema::dropIfExists($tbl);
         }
     }

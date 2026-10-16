@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // SOW §3.10 Reminders, §3.14 Vendor Portals, + cross-cutting audit log.
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('reminders', function (Blueprint $t) {
@@ -44,7 +46,7 @@ return new class extends Migration {
 
     public function down(): void
     {
-        foreach (['audit_logs','vendor_portal_integrations','reminders'] as $tbl) {
+        foreach (['audit_logs', 'vendor_portal_integrations', 'reminders'] as $tbl) {
             Schema::dropIfExists($tbl);
         }
     }

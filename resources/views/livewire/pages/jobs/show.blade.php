@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\WorkOrders\AddWorkOrder;
 use App\Models\Job;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -33,13 +34,12 @@ new #[Layout('layouts.app')] class extends Component
             'schedule_window' => ['required', 'in:'.implode(',', config('batsons.schedule_windows'))],
         ]);
 
-        $this->job->workOrders()->create([
-            'tenant_id' => $this->job->tenant_id,
-            'number' => $validated['wo_number'] ?: null,
-            'status' => 'new',
-            'customer_notes' => $validated['customer_notes'] ?: null,
-            'schedule_window' => $validated['schedule_window'],
-        ]);
+        AddWorkOrder::run(
+            $this->job,
+            $validated['wo_number'] ?: null,
+            $validated['customer_notes'] ?: null,
+            $validated['schedule_window'],
+        );
 
         $this->reset('wo_number', 'customer_notes');
         $this->schedule_window = 'morning';
@@ -99,7 +99,7 @@ new #[Layout('layouts.app')] class extends Component
                     @forelse ($workOrders as $wo)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 font-medium text-gray-900">{{ $wo->number ?? '—' }}</td>
-                            <td class="px-6 py-4"><span class="inline-flex px-2 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ $wo->status }}</span></td>
+                            <td class="px-6 py-4"><span class="inline-flex px-2 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ $wo->status->label() }}</span></td>
                             <td class="px-6 py-4 text-gray-700">{{ str_replace('_', ' ', $wo->schedule_window) }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ $wo->assignee?->name ?? 'Unassigned' }}</td>
                             <td class="px-6 py-4 text-gray-500">{{ \Illuminate\Support\Str::limit($wo->customer_notes, 50) }}</td>

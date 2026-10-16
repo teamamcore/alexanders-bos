@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // SOW §3.8 Time & Pay, §3.11 Team Records & Qualifications.
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('time_entries', function (Blueprint $t) {
@@ -58,7 +60,7 @@ return new class extends Migration {
 
     public function down(): void
     {
-        foreach (['qualifications','certifications','employees','time_entries'] as $tbl) {
+        foreach (['qualifications', 'certifications', 'employees', 'time_entries'] as $tbl) {
             Schema::dropIfExists($tbl);
         }
     }

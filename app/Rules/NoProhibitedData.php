@@ -31,12 +31,20 @@ class NoProhibitedData implements ValidationRule
 
     private function luhn(string $number): bool
     {
-        $sum = 0; $alt = false;
+        $sum = 0;
+        $alt = false;
         for ($i = strlen($number) - 1; $i >= 0; $i--) {
             $n = (int) $number[$i];
-            if ($alt) { $n *= 2; if ($n > 9) $n -= 9; }
-            $sum += $n; $alt = ! $alt;
+            if ($alt) {
+                $n *= 2;
+                if ($n > 9) {
+                    $n -= 9;
+                }
+            }
+            $sum += $n;
+            $alt = ! $alt;
         }
+
         return $sum % 10 === 0;
     }
 }

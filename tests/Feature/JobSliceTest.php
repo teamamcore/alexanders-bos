@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Role;
+use App\Models\Customer;
 use App\Models\Job;
 use App\Models\Tenant;
 use App\Models\User;
@@ -46,7 +47,7 @@ it('creates a customer and job from intake', function () {
 
 it('adds a work order to a job', function () {
     [$tenant] = actingAdmin();
-    $customer = \App\Models\Customer::create(['name' => 'Acme']);
+    $customer = Customer::create(['name' => 'Acme']);
     $job = Job::create(['customer_id' => $customer->id, 'title' => 'Job', 'status' => 'open']);
 
     Volt::test('pages.jobs.show', ['job' => $job])

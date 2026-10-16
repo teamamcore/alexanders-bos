@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
 |--------------------------------------------------------------------------
 | Batsons Business Operating System — Domain Configuration
@@ -10,7 +12,6 @@
 | holds the platform defaults; per-tenant overrides live in the `tenants`
 | settings and the module tables.
 */
-
 return [
 
     // SOW §3.13 / Exhibit B.5 — three access tiers.

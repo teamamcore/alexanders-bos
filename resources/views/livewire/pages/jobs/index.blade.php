@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Customer;
+use App\Actions\Intake\CreateJobFromIntake;
 use App\Models\Job;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -25,14 +25,8 @@ new #[Layout('layouts.app')] class extends Component
             'job_title' => ['required', 'string', 'max:255'],
         ]);
 
-        // Intake (SOW §3.1): save/find the customer, then open a job (§3.2).
-        $customer = Customer::firstOrCreate(['name' => trim($validated['customer_name'])]);
-
-        $job = Job::create([
-            'customer_id' => $customer->id,
-            'title' => $validated['job_title'],
-            'status' => 'open',
-        ]);
+        // Intake (SOW §3.1 → §3.2): find/create customer, open a job.
+        $job = CreateJobFromIntake::run($validated['customer_name'], $validated['job_title']);
 
         $this->reset('customer_name', 'job_title');
         $this->redirectRoute('jobs.show', $job, navigate: true);
