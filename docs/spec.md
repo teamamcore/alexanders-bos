@@ -46,6 +46,9 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
 ## Modules vertical-sliced so far
 - **3.1 Intake → 3.2 Jobs/Work Orders** — Volt pages `pages/jobs/{index,show}`,
   backed by Actions; work-order status pipeline live.
+- **3.3 Scheduling & Dispatch** — dispatch board `pages/schedule/index`;
+  `ScheduleWorkOrder` (new → scheduled) and `RescheduleWorkOrder` (records
+  `schedule_changes` history); field users already scoped to their own work.
 
 ## Testing
 Pest, functional style only. Tenant context is set with
