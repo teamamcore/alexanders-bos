@@ -10,6 +10,7 @@ use App\Models\Contact;
 use App\Models\Crew;
 use App\Models\Customer;
 use App\Models\Employee;
+use App\Models\EmployeeMilestone;
 use App\Models\Equipment;
 use App\Models\EquipmentMaintenance;
 use App\Models\Gate;
@@ -76,6 +77,7 @@ class ClientExporter
         VehicleMaintenance::class,
         TimeEntry::class,
         Employee::class,
+        EmployeeMilestone::class,
         Certification::class,
         Qualification::class,
         Reminder::class,

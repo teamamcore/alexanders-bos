@@ -16,13 +16,14 @@ final class AddWorkOrder
 {
     use AsAction;
 
-    public function handle(Job $job, ?string $number, ?string $customerNotes, string $scheduleWindow): WorkOrder
+    public function handle(Job $job, ?string $number, ?string $customerNotes, string $scheduleWindow, ?string $workType = null): WorkOrder
     {
         return $job->workOrders()->create([
             'tenant_id' => $job->tenant_id,
             'number' => $number ?: null,
             'customer_notes' => $customerNotes ?: null,
             'schedule_window' => $scheduleWindow,
+            'work_type' => $workType ?: null, // SOW §3.11 → §3.3 indicators
         ]);
     }
 }

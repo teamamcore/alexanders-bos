@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BuildController;
 use App\Http\Controllers\OpsController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -37,6 +39,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('time/clock-in', [OpsController::class, 'clockIn'])->name('time.clockin');
     Route::post('time/{timeEntry}/clock-out', [OpsController::class, 'clockOut'])->name('time.clockout');
 
+    // Module 3.11 — Team Records & Qualifications
+    Route::get('team', [TeamController::class, 'index'])->name('team.index');
+    Route::post('team', [TeamController::class, 'store'])->middleware('role:office,administrator')->name('team.store');
+    Route::get('team/{employee}', [TeamController::class, 'show'])->name('team.show');
+    Route::post('team/{employee}/certifications', [TeamController::class, 'storeCertification'])->middleware('role:office,administrator')->name('team.certifications.store');
+    Route::post('team/{employee}/milestones', [TeamController::class, 'storeMilestone'])->middleware('role:office,administrator')->name('team.milestones.store');
+    Route::post('team/{employee}/background-check', [TeamController::class, 'updateBackgroundCheck'])->middleware('role:administrator')->name('team.background');
+
+    // Build checklist (mirrors the Notion Build Timeline)
+    Route::get('build', [BuildController::class, 'index'])->name('build.index');
+
     Route::view('profile', 'profile')->name('profile');
 
     // Module 3.13 — Administration & Security (administrators only)
@@ -49,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('terminology', [AdminController::class, 'terminology'])->name('terminology');
         Route::post('terminology', [AdminController::class, 'updateTerminology'])->name('terminology.update');
         Route::get('security', [AdminController::class, 'security'])->name('security');
+        // 3.11 — management assignment area for qualification values
+        Route::get('qualifications', [AdminController::class, 'qualifications'])->name('qualifications');
+        Route::post('qualifications', [AdminController::class, 'updateQualifications'])->name('qualifications.update');
     });
 });
 

@@ -64,6 +64,16 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   and the written security overview (`docs/SECURITY.md`, rendered in-app).
   Deactivated users are refused at login and dropped by `SetCurrentTenant`.
 
+- **3.11 Team Records & Qualifications** — `/team` (`TeamController`): profiles,
+  milestones, certifications/licences with expiry alerts (`Certification::expiringWithin`),
+  background check status+date (admin-only, no documents), and the admin
+  **qualification matrix** (`/admin/qualifications`, `SetQualification`, audited).
+  `App\Support\SchedulingIndicators` feeds level + cert health into the dispatch
+  board per work order `work_type` (SOW §3.3). Field users see only their own profile.
+- **Build checklist** — `/build` mirrors the Notion Build Timeline from
+  `config/build.php` (status, dates, notes, and a link to the live screen for each
+  shipped module). Update it alongside Notion when a module ships.
+
 ## Platform / Client seam
 `php artisan client:export {client}` and `client:fork {source} {name}` — see
 `ARCHITECTURE.md`. Everything client-owned lives in `config/clients/<key>.php`,

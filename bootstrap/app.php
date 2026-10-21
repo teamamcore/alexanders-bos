@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,9 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // Bind current tenant/user on every web request (tenant isolation).
+        // Must run BEFORE route-model binding so {job}, {employee}, … resolve
+        // inside the tenant scope (cross-tenant ids → 404).
         $middleware->web(append: [
             SetCurrentTenant::class,
         ]);
+        $middleware->prependToPriorityList(SubstituteBindings::class, SetCurrentTenant::class);
         // Role guard alias (SOW §3.13).
         $middleware->alias([
             'role' => EnsureRole::class,

@@ -11,6 +11,7 @@ new #[Layout('layouts.app')] class extends Component
     public string $wo_number = '';
     public string $customer_notes = '';
     public string $schedule_window = 'morning';
+    public string $work_type = '';
 
     public function mount(Job $job): void
     {
@@ -23,6 +24,7 @@ new #[Layout('layouts.app')] class extends Component
         return [
             'workOrders' => $this->job->workOrders()->with('assignee')->latest()->get(),
             'windows' => config('batsons.schedule_windows'),
+            'workTypes' => config('batsons.work_types', []),
         ];
     }
 
@@ -32,6 +34,7 @@ new #[Layout('layouts.app')] class extends Component
             'wo_number' => ['nullable', 'string', 'max:50'],
             'customer_notes' => ['nullable', 'string', 'max:2000'],
             'schedule_window' => ['required', 'in:'.implode(',', config('batsons.schedule_windows'))],
+            'work_type' => ['nullable', 'in:'.implode(',', array_keys(config('batsons.work_types', [])))],
         ]);
 
         AddWorkOrder::run(
@@ -39,9 +42,10 @@ new #[Layout('layouts.app')] class extends Component
             $validated['wo_number'] ?: null,
             $validated['customer_notes'] ?: null,
             $validated['schedule_window'],
+            $validated['work_type'] ?: null,
         );
 
-        $this->reset('wo_number', 'customer_notes');
+        $this->reset('wo_number', 'customer_notes', 'work_type');
         $this->schedule_window = 'morning';
     }
 }; ?>
@@ -60,7 +64,7 @@ new #[Layout('layouts.app')] class extends Component
         {{-- Add work order --}}
         <div class="card p-6">
             <h3 class="font-semibold text-slate-900 mb-4">Add work order</h3>
-            <form wire:submit="addWorkOrder" class="grid gap-4 sm:grid-cols-4 sm:items-end">
+            <form wire:submit="addWorkOrder" class="grid gap-4 sm:grid-cols-5 sm:items-end">
                 <div>
                     <x-input-label for="wo_number" :value="__('WO number')" />
                     <x-text-input wire:model="wo_number" id="wo_number" class="block mt-1 w-full" placeholder="WO-1002" />
@@ -70,6 +74,15 @@ new #[Layout('layouts.app')] class extends Component
                     <x-text-input wire:model="customer_notes" id="customer_notes" class="block mt-1 w-full" placeholder="What the customer reported" />
                 </div>
                 <div>
+                    <x-input-label for="work_type" :value="__('Work type')" />
+                    <select wire:model="work_type" id="work_type" class="block mt-1 w-full border-slate-300 rounded-lg text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                        <option value="">—</option>
+                        @foreach ($workTypes as $k => $label)
+                            <option value="{{ $k }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
                     <x-input-label for="schedule_window" :value="__('Window')" />
                     <select wire:model="schedule_window" id="schedule_window" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
                         @foreach ($windows as $w)
@@ -77,7 +90,7 @@ new #[Layout('layouts.app')] class extends Component
                         @endforeach
                     </select>
                 </div>
-                <div class="sm:col-span-4">
+                <div class="sm:col-span-5">
                     <x-primary-button>{{ __('Add work order') }}</x-primary-button>
                 </div>
             </form>

@@ -9,8 +9,10 @@ use App\Actions\Admin\CreateUser;
 use App\Actions\Admin\DeactivateUser;
 use App\Actions\Admin\ReactivateUser;
 use App\Actions\Admin\UpdateTerminology;
+use App\Actions\Team\SetQualification;
 use App\Enums\Role;
 use App\Models\AuditLog;
+use App\Models\Employee;
 use App\Models\Tenant;
 use App\Models\User;
 use DomainException;
@@ -125,6 +127,48 @@ final class AdminController extends Controller
         UpdateTerminology::run($this->tenant(), $data['terminology'] ?? [], $data['abbreviations'] ?? []);
 
         return back()->with('status', 'Terminology saved. Labels update across the app immediately.');
+    }
+
+    // ---- Qualification matrix (SOW §3.11) ---------------------------------
+
+    public function qualifications(): View
+    {
+        return view('ops.admin.qualifications', [
+            'employees' => Employee::query()->with('qualifications')->orderBy('name')->get(),
+            'workTypes' => config('batsons.work_types', []),
+            'levels' => config('batsons.qualification_levels', []),
+        ]);
+    }
+
+    public function updateQualifications(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'q' => ['required', 'array'],
+            'q.*' => ['array'],
+            'q.*.*' => ['integer', Rule::in(array_keys(config('batsons.qualification_levels', [])))],
+        ]);
+
+        $actor = $this->actor($request);
+        $employees = Employee::query()->whereIn('id', array_keys($data['q']))->with('qualifications')->get()->keyBy('id');
+        $changed = 0;
+
+        foreach ($data['q'] as $employeeId => $levels) {
+            $employee = $employees->get((int) $employeeId);
+            if (! $employee instanceof Employee) {
+                continue;
+            }
+            foreach ($levels as $workType => $level) {
+                try {
+                    $before = $employee->levelFor((string) $workType);
+                    SetQualification::run($employee, (string) $workType, (int) $level, $actor);
+                    $changed += $before === (int) $level ? 0 : 1;
+                } catch (DomainException) {
+                    // unknown work type — only configured keys are rendered, so skip
+                }
+            }
+        }
+
+        return back()->with('status', $changed ? "Saved {$changed} qualification change(s)." : 'No changes.');
     }
 
     // ---- Security overview ------------------------------------------------

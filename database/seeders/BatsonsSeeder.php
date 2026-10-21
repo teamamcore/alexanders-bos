@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\Role;
 use App\Models\Customer;
+use App\Models\Employee;
 use App\Models\Equipment;
 use App\Models\Gate;
 use App\Models\Job;
@@ -91,6 +92,45 @@ class BatsonsSeeder extends Seeder
             'status' => 'new',
             'customer_notes' => 'Annual backflow test due.',
             'schedule_window' => 'morning',
+            'work_type' => 'backflow_testing',
         ]);
+
+        // Team records (SOW §3.11): two field techs with certs + qualification values,
+        // so the dispatch board indicators have something to show.
+        $marcus = User::create([
+            'tenant_id' => $tenant->id, 'name' => 'Marcus Reyes', 'email' => 'marcus@batsonsplumbing.com',
+            'password' => Hash::make('password'), 'role' => Role::Field,
+        ]);
+        $marcus->forceFill(['email_verified_at' => now()])->save();
+        $dana = User::create([
+            'tenant_id' => $tenant->id, 'name' => 'Dana Whitfield', 'email' => 'dana@batsonsplumbing.com',
+            'password' => Hash::make('password'), 'role' => Role::Field,
+        ]);
+        $dana->forceFill(['email_verified_at' => now()])->save();
+
+        $eMarcus = Employee::create(['user_id' => $marcus->id, 'name' => 'Marcus Reyes', 'title' => 'Lead plumber',
+            'hired_at' => '2019-03-04', 'background_check_status' => 'cleared', 'background_check_date' => '2025-01-15']);
+        $eMarcus->milestones()->create(['title' => 'Hired', 'occurred_at' => '2019-03-04']);
+        $eMarcus->milestones()->create(['title' => 'Promoted to lead', 'occurred_at' => '2023-06-01']);
+        $eMarcus->certifications()->create(['name' => 'Backflow Assembly Tester', 'type' => 'certification', 'number' => 'BAT-4471',
+            'issued_at' => now()->subYears(3)->addDays(30), 'expires_at' => now()->addDays(30)]);
+        $eMarcus->certifications()->create(['name' => 'Journeyman Plumber', 'type' => 'license', 'number' => 'JP-20918',
+            'issued_at' => '2020-02-01', 'expires_at' => now()->addMonths(14)]);
+        foreach (['backflow_testing' => 3, 'sewer' => 2, 'water_heater' => 2, 'camera_inspection' => 1] as $wt => $lvl) {
+            $eMarcus->qualifications()->create(['work_type' => $wt, 'value' => $lvl]);
+        }
+
+        $eDana = Employee::create(['user_id' => $dana->id, 'name' => 'Dana Whitfield', 'title' => 'Service technician',
+            'hired_at' => '2022-08-15', 'background_check_status' => 'pending']);
+        $eDana->milestones()->create(['title' => 'Hired', 'occurred_at' => '2022-08-15']);
+        $eDana->certifications()->create(['name' => 'Journeyman Plumber', 'type' => 'license', 'number' => 'JP-31102',
+            'issued_at' => '2022-09-01', 'expires_at' => now()->subDays(10)]);
+        $eDana->certifications()->create(['name' => 'OSHA 10', 'type' => 'certification', 'issued_at' => '2022-09-20']);
+        foreach (['camera_inspection' => 3, 'sewer' => 3, 'backflow_testing' => 1] as $wt => $lvl) {
+            $eDana->qualifications()->create(['work_type' => $wt, 'value' => $lvl]);
+        }
+
+        Employee::create(['user_id' => User::where('email', 'eric@batsonsplumbing.com')->value('id'), 'name' => 'Eric White',
+            'title' => 'Owner / project lead', 'hired_at' => '2008-01-02', 'background_check_status' => 'cleared', 'background_check_date' => '2024-11-01']);
     }
 }

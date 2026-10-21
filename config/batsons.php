@@ -64,6 +64,23 @@ return [
         'time_categories' => ['travel', 'on_site', 'shop'],
     ],
 
+    // SOW §3.11 — work types + qualification levels (set during discovery; tenant-
+    // editable). Administrators assign a level per employee per work type; values
+    // feed the dispatch board indicators (§3.3).
+    'work_types' => [
+        'backflow_testing' => 'Backflow testing',
+        'sewer' => 'Sewer',
+        'camera_inspection' => 'Camera inspection',
+        'water_heater' => 'Water heater',
+        'excavation' => 'Excavation',
+        'gas' => 'Gas',
+    ],
+    'qualification_levels' => [0 => 'None', 1 => 'Helper', 2 => 'Qualified', 3 => 'Lead'],
+    // Certification / licence expiry alerts this many days ahead.
+    'certification_alert_days' => 60,
+    // Background check: status + date only (MSA Ex. B.2 / B.5(g)).
+    'background_check_statuses' => ['not_started', 'pending', 'cleared', 'flagged', 'expired'],
+
     // SOW §3.3 — scheduling windows.
     'schedule_windows' => ['morning', 'afternoon', 'all_day', 'emergency', 'timed'],
 

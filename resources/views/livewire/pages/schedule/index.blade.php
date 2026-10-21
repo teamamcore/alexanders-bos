@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\WorkOrder;
 use App\States\WorkOrder\NewWorkOrder;
 use App\States\WorkOrder\Scheduled;
+use App\Support\SchedulingIndicators;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -22,12 +23,19 @@ new #[Layout('layouts.app')] class extends Component
 
     public function with(): array
     {
+        $unscheduled = WorkOrder::whereState('status', NewWorkOrder::class)
+            ->with('job.customer')->latest()->get();
+        $assignees = User::where('tenant_id', app('currentTenantId'))->where('is_active', true)->orderBy('name')->get();
+        // SOW §3.11 → §3.3: qualification level on this WO's work type + cert health per assignee.
+        $workType = $this->scheduling_id ? $unscheduled->firstWhere('id', $this->scheduling_id)?->work_type : null;
+
         return [
-            'unscheduled' => WorkOrder::whereState('status', NewWorkOrder::class)
-                ->with('job.customer')->latest()->get(),
+            'unscheduled' => $unscheduled,
             'scheduled' => WorkOrder::whereState('status', Scheduled::class)
                 ->with('job.customer', 'assignee')->orderBy('scheduled_date')->get(),
-            'assignees' => User::where('tenant_id', app('currentTenantId'))->orderBy('name')->get(),
+            'assignees' => $assignees,
+            'indicators' => $this->scheduling_id ? SchedulingIndicators::forUsers($assignees, $workType) : [],
+            'workType' => $workType,
             'windows' => config('batsons.schedule_windows'),
         ];
     }
@@ -91,19 +99,24 @@ new #[Layout('layouts.app')] class extends Component
                             <td class="px-6 py-4">
                                 <div class="font-medium text-slate-900">{{ $wo->number ?? 'WO' }}</div>
                                 <div class="text-sm text-slate-500">{{ $wo->job?->customer?->name }} — {{ $wo->job?->title }}</div>
+                                @if ($wo->work_type)<span class="badge-blue mt-1">{{ SchedulingIndicators::workTypeLabel($wo->work_type) }}</span>@endif
                             </td>
                             <td class="px-6 py-4 w-2/3">
                                 @if ($scheduling_id === $wo->id)
                                     <form wire:submit="schedule({{ $wo->id }})" class="grid gap-3 sm:grid-cols-4 sm:items-end">
                                         <div>
                                             <x-input-label :value="__('Assignee')" />
-                                            <select wire:model="assignee_id" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                            <select wire:model="assignee_id" class="block mt-1 w-full border-slate-300 rounded-lg text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
                                                 <option value="">—</option>
                                                 @foreach ($assignees as $u)
-                                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
+                                                    @php $tag = isset($indicators[$u->id]) ? SchedulingIndicators::label($indicators[$u->id], $workType) : ''; @endphp
+                                                    <option value="{{ $u->id }}">{{ $u->name }}{{ $tag ? ' — '.$tag : '' }}</option>
                                                 @endforeach
                                             </select>
                                             <x-input-error :messages="$errors->get('assignee_id')" class="mt-1" />
+                                            @if ($workType)
+                                                <div class="mt-1 text-[11px] text-slate-400">Levels shown for {{ SchedulingIndicators::workTypeLabel($workType) }}; ⚠ = lapsed licence/cert.</div>
+                                            @endif
                                         </div>
                                         <div>
                                             <x-input-label :value="__('Date')" />
@@ -112,7 +125,7 @@ new #[Layout('layouts.app')] class extends Component
                                         </div>
                                         <div>
                                             <x-input-label :value="__('Window')" />
-                                            <select wire:model="window" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                            <select wire:model="window" class="block mt-1 w-full border-slate-300 rounded-lg text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
                                                 @foreach ($windows as $w)
                                                     <option value="{{ $w }}">{{ str_replace('_', ' ', $w) }}</option>
                                                 @endforeach
