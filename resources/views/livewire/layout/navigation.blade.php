@@ -28,6 +28,11 @@ new class extends Component
         ['route' => 'parts.index',      'is' => ['parts.*', 'equipment.*', 'fleet.*'], 'label' => __('Assets'), 'navigate' => false],
         ['route' => auth()->user()->isField() ? 'messages.calls' : 'messages.index', 'is' => 'messages.*', 'label' => __('Messages'), 'navigate' => false],
         ['route' => 'inbox.index',      'is' => 'inbox.*',     'label' => __('Inbox'),            'navigate' => false],
+    ];
+    if (! auth()->user()->isField()) {
+        $links[] = ['route' => 'reminders.index', 'is' => 'reminders.*', 'label' => __('Reminders'), 'navigate' => false];
+    }
+    $links = [...$links,
         ['route' => 'build.index',      'is' => 'build.*',     'label' => __('Build'),            'navigate' => false],
     ];
     if (auth()->user()->isAdministrator()) {

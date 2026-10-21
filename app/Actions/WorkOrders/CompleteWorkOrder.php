@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\WorkOrders;
 
 use App\Actions\Communication\NotifyCustomer;
+use App\Actions\Reminders\OnWorkOrderCompleted;
 use App\Models\User;
 use App\Models\WorkOrder;
 use App\States\WorkOrder\Completed;
@@ -29,6 +30,9 @@ final class CompleteWorkOrder
         if ($notify) {
             NotifyCustomer::run($workOrder, 'work_complete', $actor, [], true);
         }
+
+        // SOW §3.10 — service completed → reminder scheduled (or reminder closed + rolled).
+        OnWorkOrderCompleted::run($workOrder);
 
         return $workOrder;
     }

@@ -28,6 +28,7 @@ use App\Models\MileageReading;
 use App\Models\Part;
 use App\Models\Proposal;
 use App\Models\Qualification;
+use App\Models\RecurringService;
 use App\Models\Reminder;
 use App\Models\ScheduleChange;
 use App\Models\ServiceLocation;
@@ -89,6 +90,7 @@ class ClientExporter
         EmployeeMilestone::class,
         Certification::class,
         Qualification::class,
+        RecurringService::class,
         Reminder::class,
         VendorPortalIntegration::class,
         DeliveryCheck::class,

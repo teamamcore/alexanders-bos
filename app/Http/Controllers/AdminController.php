@@ -9,12 +9,14 @@ use App\Actions\Admin\CreateUser;
 use App\Actions\Admin\DeactivateUser;
 use App\Actions\Admin\ReactivateUser;
 use App\Actions\Admin\UpdateTerminology;
+use App\Actions\Reminders\UpdateReminderTypes;
 use App\Actions\Team\SetQualification;
 use App\Enums\Role;
 use App\Models\AuditLog;
 use App\Models\Employee;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\ReminderTypes;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -169,6 +171,39 @@ final class AdminController extends Controller
         }
 
         return back()->with('status', $changed ? "Saved {$changed} qualification change(s)." : 'No changes.');
+    }
+
+    // ---- Reminder types (SOW §3.10) ---------------------------------------
+
+    public function reminderTypes(): View
+    {
+        return view('ops.admin.reminder-types', [
+            'types' => ReminderTypes::all(),
+            'workTypes' => config('batsons.work_types', []),
+        ]);
+    }
+
+    public function updateReminderTypes(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'types' => ['required', 'array'],
+            'types.*.key' => ['nullable', 'string', 'max:40'],
+            'types.*.label' => ['nullable', 'string', 'max:80'],
+            'types.*.customer_label' => ['nullable', 'string', 'max:80'],
+            'types.*.interval_months' => ['nullable', 'integer', 'min:1', 'max:120'],
+            'types.*.lead_days_min' => ['nullable', 'integer', 'min:0', 'max:365'],
+            'types.*.lead_days_max' => ['nullable', 'integer', 'min:0', 'max:365'],
+            'types.*.auto_message' => ['nullable', 'boolean'],
+            'types.*.work_type' => ['nullable', 'string', Rule::in(array_keys(config('batsons.work_types', [])))],
+        ]);
+
+        try {
+            UpdateReminderTypes::run($this->tenant(), $data['types'], $this->actor($request));
+        } catch (DomainException $e) {
+            return back()->withErrors(['types' => $e->getMessage()]);
+        }
+
+        return back()->with('status', 'Reminder types saved.');
     }
 
     // ---- Security overview ------------------------------------------------

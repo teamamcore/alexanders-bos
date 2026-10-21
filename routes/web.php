@@ -11,6 +11,7 @@ use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OpsController;
 use App\Http\Controllers\PartsController;
+use App\Http\Controllers\RemindersController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
@@ -112,6 +113,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inbox/{with}', [InboxController::class, 'index'])->name('inbox.thread');
     Route::post('inbox', [InboxController::class, 'send'])->name('inbox.send');
 
+    // Module 3.10 — Recurring Service & Reminders (office + administrators)
+    Route::middleware('role:office,administrator')->prefix('reminders')->name('reminders.')->group(function () {
+        Route::get('/', [RemindersController::class, 'index'])->name('index');
+        Route::post('services', [RemindersController::class, 'storeService'])->name('services.store');
+        Route::post('services/{service}/toggle', [RemindersController::class, 'toggleService'])->name('services.toggle');
+        Route::post('{reminder}/contact', [RemindersController::class, 'contact'])->name('contact');
+        Route::post('{reminder}/schedule', [RemindersController::class, 'schedule'])->name('schedule');
+        Route::post('{reminder}/skip', [RemindersController::class, 'skip'])->name('skip');
+    });
+
     // Build checklist (mirrors the Notion Build Timeline)
     Route::get('progress', [BuildController::class, 'index'])->name('build.index');
 
@@ -130,6 +141,9 @@ Route::middleware(['auth'])->group(function () {
         // 3.11 — management assignment area for qualification values
         Route::get('qualifications', [AdminController::class, 'qualifications'])->name('qualifications');
         Route::post('qualifications', [AdminController::class, 'updateQualifications'])->name('qualifications.update');
+        // 3.10 — configurable reminder types
+        Route::get('reminder-types', [AdminController::class, 'reminderTypes'])->name('reminder-types');
+        Route::post('reminder-types', [AdminController::class, 'updateReminderTypes'])->name('reminder-types.update');
     });
 });
 

@@ -96,6 +96,15 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   per topic per day). `/inbox` is user-to-user messaging (`user_messages`);
   `/inbox/email` is the Client inbound address queue (`inbound_emails`, fed by
   `POST /webhooks/email`, routed by WO/job number in subject → customer email → contact email, else manual).
+- **3.10 Recurring Service & Reminders** — `recurring_services` (schedule per
+  customer/site) + `reminders` (one worked cycle). `OnWorkOrderCompleted` (from
+  `CompleteWorkOrder`) starts a schedule for a matching `work_type` or closes the
+  reminder's job and rolls the schedule. `reminders:run` (06:30 daily →
+  `RunReminders`) opens cycles, flips pending→notified when `remind_at` arrives,
+  notifies the office, and sends the `service_reminder` template when
+  `auto_message`. `/reminders` works the queue (text / email / call / schedule job /
+  skip); `/admin/reminder-types` edits `ReminderTypes` (config defaults + tenant
+  overrides: interval, 45–60 d style window, auto-message, triggering work type).
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

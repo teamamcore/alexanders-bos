@@ -102,12 +102,15 @@ return [
             'body' => '{company} update on {job}: {note}'],
         'instructions' => ['name' => 'Instructions', 'channel' => 'sms', 'subject' => '{company}: a note from your technician',
             'body' => '{company}: {note}'],
+        'service_reminder' => ['name' => 'Service reminder', 'channel' => 'sms', 'subject' => '{company}: your {service} is coming due',
+            'body' => 'Hi {first_name}, {company} here — your {service} is due by {due_date}. Reply to this message or call us to get it on the schedule. {note}'],
     ],
     'message_placeholders' => [
         'customer' => 'Customer name', 'first_name' => 'First word of the customer name', 'company' => 'Your company name',
         'job' => 'Job title', 'job_number' => 'Job number', 'work_order' => 'Work order number', 'date' => 'Scheduled day',
         'window' => 'Scheduling window', 'tech' => 'Assigned technician', 'address' => 'Service address',
         'eta' => 'ETA text (on the way)', 'note' => 'Free text from the sender',
+        'service' => 'Recurring service name (reminders)', 'due_date' => 'Service due date (reminders)',
     ],
 
     // SOW §3.7 — parts, equipment, fleet.
@@ -137,10 +140,14 @@ return [
     // SOW §3.5 — proposal pipeline stages.
     'proposal_stages' => ['draft', 'sent', 'follow_up', 'won', 'lost'],
 
-    // SOW §3.10 — recurring reminder types (tenant-configurable).
+    // SOW §3.10 — recurring reminder types (platform defaults; tenant overrides in
+    // tenants.settings.reminder_types via Admin → Reminders). lead_days_max = when
+    // the office is alerted / contact starts; lead_days_min = have it scheduled by.
     'reminder_types' => [
-        'backflow_test' => ['lead_days_min' => 45, 'lead_days_max' => 60],
-        'water_heater_service' => ['interval_months' => 12],
+        'backflow_test' => ['label' => 'Annual backflow test', 'customer_label' => 'annual backflow device test',
+            'interval_months' => 12, 'lead_days_min' => 45, 'lead_days_max' => 60, 'auto_message' => false, 'work_type' => 'backflow_testing'],
+        'water_heater_service' => ['label' => 'Water heater service', 'customer_label' => 'water heater service',
+            'interval_months' => 12, 'lead_days_min' => 7, 'lead_days_max' => 30, 'auto_message' => true, 'work_type' => 'water_heater'],
     ],
 
     // SOW §3.14 — vendor portal integrations.

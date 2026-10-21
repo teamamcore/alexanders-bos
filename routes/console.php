@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // SOW §3.12 — morning in-app digest replaces the internal reminder emails.
 Schedule::command('notifications:digest')->dailyAt('07:00');
+
+// SOW §3.10 — open cycle reminders, alert the office when a window opens, auto-message customers.
+Schedule::command('reminders:run')->dailyAt('06:30');

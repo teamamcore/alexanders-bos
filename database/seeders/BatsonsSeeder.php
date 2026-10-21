@@ -10,6 +10,7 @@ use App\Models\Equipment;
 use App\Models\Gate;
 use App\Models\Job;
 use App\Models\Part;
+use App\Models\RecurringService;
 use App\Models\ServiceLocation;
 use App\Models\Supplier;
 use App\Models\Tenant;
@@ -118,6 +119,23 @@ class BatsonsSeeder extends Seeder
             'schedule_window' => 'morning',
             'work_type' => 'backflow_testing',
         ]);
+
+        // Recurring service (SOW §3.10): Acme's RPZ is due in 50 days → inside the 45–60 day
+        // window, so the Reminders page has something to work; a water heater a few months out.
+        $rpz = RecurringService::create([
+            'customer_id' => $customer->id, 'service_location_id' => $site->id, 'type' => 'backflow_test', 'label' => 'RPZ #1 — mech room',
+            'interval_months' => 12, 'lead_days_min' => 45, 'lead_days_max' => 60, 'auto_message' => false,
+            'last_serviced_at' => now()->addDays(50)->subYear(), 'next_due_at' => now()->addDays(50),
+        ]);
+        $rpz->reminders()->create(['customer_id' => $customer->id, 'service_location_id' => $site->id, 'type' => 'backflow_test',
+            'due_at' => $rpz->next_due_at, 'remind_at' => $rpz->remindAt(), 'contact_by' => $rpz->contactBy(), 'status' => 'pending', 'auto_message' => false]);
+        $wh = RecurringService::create([
+            'customer_id' => $customer->id, 'service_location_id' => $site->id, 'type' => 'water_heater_service', 'label' => 'Break-room 50-gal',
+            'interval_months' => 12, 'lead_days_min' => 7, 'lead_days_max' => 30, 'auto_message' => true,
+            'last_serviced_at' => now()->subMonths(8), 'next_due_at' => now()->addMonths(4),
+        ]);
+        $wh->reminders()->create(['customer_id' => $customer->id, 'service_location_id' => $site->id, 'type' => 'water_heater_service',
+            'due_at' => $wh->next_due_at, 'remind_at' => $wh->remindAt(), 'contact_by' => $wh->contactBy(), 'status' => 'pending', 'auto_message' => true]);
 
         // Team records (SOW §3.11): two field techs with certs + qualification values,
         // so the dispatch board indicators have something to show.
