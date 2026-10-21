@@ -106,6 +106,9 @@ it('lets a reactivated user sign in again', function () {
 });
 
 it('refuses to deactivate yourself or the last active administrator', function () {
+    // The seeder ships two administrators; park the AmCore one so Eric is the last.
+    User::where('email', 'david@amcoresystems.com')->update(['is_active' => false]);
+
     expect(fn () => DeactivateUser::run($this->admin, $this->admin))->toThrow(DomainException::class);
 
     $second = User::factory()->create(['tenant_id' => $this->tenant->id, 'role' => Role::Administrator]);
