@@ -11,6 +11,7 @@ use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OpsController;
 use App\Http\Controllers\PartsController;
+use App\Http\Controllers\PortalsController;
 use App\Http\Controllers\RemindersController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\TeamController;
@@ -132,6 +133,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('jobs/{job}', [ReportsController::class, 'job'])->name('job');
     });
 
+    // Module 3.14 — Vendor Portal Integrations (office + administrators; configuration admin-only)
+    Route::middleware('role:office,administrator')->prefix('portals')->name('portals.')->group(function () {
+        Route::get('/', [PortalsController::class, 'index'])->name('index');
+        Route::post('{integration}/poll', [PortalsController::class, 'poll'])->name('poll');
+        Route::post('{integration}/import', [PortalsController::class, 'import'])->name('import');
+        Route::post('requests/{pwo}/paid', [PortalsController::class, 'markPaid'])->name('paid');
+        Route::middleware('role:administrator')->group(function () {
+            Route::post('/', [PortalsController::class, 'store'])->name('store');
+            Route::post('{integration}', [PortalsController::class, 'update'])->name('update');
+        });
+    });
+
     // Build checklist (mirrors the Notion Build Timeline)
     Route::get('progress', [BuildController::class, 'index'])->name('build.index');
 
@@ -159,5 +172,6 @@ Route::middleware(['auth'])->group(function () {
 // Texting-platform webhook (token-protected, no session) — SOW §3.4.
 Route::post('webhooks/sms', [WebhookController::class, 'inboundSms'])->name('webhooks.sms');
 Route::post('webhooks/email', [WebhookController::class, 'inboundEmail'])->name('webhooks.email');
+Route::post('webhooks/portals/{integration}', [WebhookController::class, 'portal'])->name('webhooks.portal'); // SOW §3.14
 
 require __DIR__.'/auth.php';

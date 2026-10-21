@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\WorkOrders;
 
 use App\Actions\Communication\NotifyCustomer;
+use App\Actions\Portals\PushPortalStatus;
 use App\Models\User;
 use App\Models\WorkOrder;
 use App\Platform\Notifications\Notifier;
@@ -41,6 +42,9 @@ final class ScheduleWorkOrder
         Notifier::send($assignee, 'assignment', "New assignment: {$workOrder->number}",
             trim(($workOrder->job->customer->name ?? '')." · {$date} ".str_replace('_', ' ', $window)),
             route('jobs.show', $workOrder->job_id), ['work_order_id' => $workOrder->id]);
+
+        // SOW §3.14 — portal-issued work: tell the portal it's scheduled.
+        PushPortalStatus::run($workOrder, 'scheduled', "Scheduled {$date} ({$window}) — {$assignee->name}");
 
         return $workOrder;
     }

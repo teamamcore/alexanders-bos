@@ -26,6 +26,8 @@ use App\Models\Job;
 use App\Models\MessageTemplate;
 use App\Models\MileageReading;
 use App\Models\Part;
+use App\Models\PortalSyncEvent;
+use App\Models\PortalWorkOrder;
 use App\Models\Proposal;
 use App\Models\Qualification;
 use App\Models\RecurringService;
@@ -93,6 +95,8 @@ class ClientExporter
         RecurringService::class,
         Reminder::class,
         VendorPortalIntegration::class,
+        PortalWorkOrder::class,
+        PortalSyncEvent::class,
         DeliveryCheck::class,
         EquipmentUsage::class,
         MileageReading::class,

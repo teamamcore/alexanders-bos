@@ -13,3 +13,6 @@ Schedule::command('notifications:digest')->dailyAt('07:00');
 
 // SOW §3.10 — open cycle reminders, alert the office when a window opens, auto-message customers.
 Schedule::command('reminders:run')->dailyAt('06:30');
+
+// SOW §3.14 — pull new portal work requests and payment updates.
+Schedule::command('portals:poll')->everyFifteenMinutes();

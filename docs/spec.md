@@ -114,6 +114,16 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   (inline SVG, validated 2-series palette), `/reports/ar`, drill-down
   `/reports/work-orders?month|type|customer|from|to`, cost sheet `/reports/jobs/{job}`.
   `ApproveInvoice` stamps issued/due dates; `MarkInvoicePaid` stamps paid_at.
+- **3.14 Vendor Portal Integrations** — `Platform/Portals/*`: `PortalAdapter`
+  contract (pull requests, push status, push invoice, pull payment) with
+  `SandboxAdapter` (fixtures in `config/portals.php`), `ServiceChannelAdapter` /
+  `ParamarkAdapter` (guarded by `PortalNotConnected` until provider credentials,
+  stored `encrypted:array`), and `ManualAdapter` (no-API portals). Actions:
+  `ImportPortalWorkOrder` (customer/site/job/typed WO, idempotent), `PollPortal`
+  (`portals:poll` every 15 min), `PushPortalStatus` (from Schedule/Start/Complete),
+  `PushPortalInvoice` (from ApproveInvoice; NTE flag), `RecordPortalPayment`,
+  `UpdateIntegration`. `POST /webhooks/portals/{integration}` with per-portal token.
+  `/portals` shows the five-included usage (blocked excluded), requests pipeline, sync log.
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

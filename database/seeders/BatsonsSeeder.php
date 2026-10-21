@@ -19,10 +19,12 @@ use App\Models\Tenant;
 use App\Models\TimeEntry;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\VendorPortalIntegration;
 use App\Models\WorkOrder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class BatsonsSeeder extends Seeder
 {
@@ -122,6 +124,15 @@ class BatsonsSeeder extends Seeder
             'schedule_window' => 'morning',
             'work_type' => 'backflow_testing',
         ]);
+
+        // Vendor portals (SOW §3.14): the two the SOW names (awaiting provider access) + the demo sandbox.
+        VendorPortalIntegration::create(['key' => 'service_channel', 'name' => 'ServiceChannel', 'adapter' => 'service_channel', 'status' => 'building',
+            'webhook_token' => Str::random(40), 'notes' => 'National accounts dispatch through ServiceChannel. Vendor API access requested; provider approval pending.']);
+        VendorPortalIntegration::create(['key' => 'paramark', 'name' => 'Paramark', 'adapter' => 'paramark', 'status' => 'planned',
+            'webhook_token' => Str::random(40), 'notes' => 'Confirm in writing with Batsons which customers require Paramark before build.']);
+        VendorPortalIntegration::create(['key' => 'sandbox', 'name' => 'Sandbox portal (demo)', 'adapter' => 'sandbox', 'status' => 'live',
+            'go_live_at' => now()->toDateString(), 'counts_toward_included' => false, 'webhook_token' => 'sandbox-demo-token',
+            'notes' => 'Simulated portal so the import → status → invoice → payment flow can be walked end to end.']);
 
         // Recurring service (SOW §3.10): Acme's RPZ is due in 50 days → inside the 45–60 day
         // window, so the Reminders page has something to work; a water heater a few months out.

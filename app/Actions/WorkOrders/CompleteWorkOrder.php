@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\WorkOrders;
 
 use App\Actions\Communication\NotifyCustomer;
+use App\Actions\Portals\PushPortalStatus;
 use App\Actions\Reminders\OnWorkOrderCompleted;
 use App\Models\User;
 use App\Models\WorkOrder;
@@ -33,6 +34,8 @@ final class CompleteWorkOrder
 
         // SOW §3.10 — service completed → reminder scheduled (or reminder closed + rolled).
         OnWorkOrderCompleted::run($workOrder);
+
+        PushPortalStatus::run($workOrder, 'complete', "Work complete — {$actor->name}"); // SOW §3.14
 
         return $workOrder;
     }

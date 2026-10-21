@@ -6,9 +6,16 @@ namespace App\Http\Controllers;
 
 use App\Actions\Communication\RecordInboundMessage;
 use App\Actions\Messaging\IngestInboundEmail;
+use App\Actions\Portals\ImportPortalWorkOrder;
+use App\Actions\Portals\RecordPortalPayment;
+use App\Models\PortalSyncEvent;
+use App\Models\PortalWorkOrder;
+use App\Models\VendorPortalIntegration;
+use App\Platform\Portals\PortalWorkRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 /** Inbound texting-platform webhook (SOW §3.4). Shared-token protected; no session. */
 final class WebhookController extends Controller
@@ -58,6 +65,41 @@ final class WebhookController extends Controller
         $email = IngestInboundEmail::run($data['from'], $data['from_name'] ?? null, $data['to'] ?? null, $data['subject'] ?? null, $body, $data['message_id'] ?? null);
 
         return response()->json(['ok' => true, 'id' => $email->id, 'routed' => $email->status === 'routed']);
+    }
+
+    /** SOW §3.14 — a portal pushes a work request or a payment notice (per-integration token). */
+    public function portal(Request $request, VendorPortalIntegration $integration): JsonResponse
+    {
+        $token = (string) ($request->header('X-Portal-Token') ?? $request->input('token'));
+        if ($token === '' || ! $integration->webhook_token || ! hash_equals($integration->webhook_token, $token)) {
+            return response()->json(['ok' => false, 'error' => 'invalid token'], 403);
+        }
+        app()->instance('currentTenantId', $integration->tenant_id);
+
+        $data = $request->validate([
+            'type' => ['required', Rule::in(['work_request', 'payment', 'status'])],
+            'external_id' => ['required', 'string', 'max:80'],
+        ]);
+
+        if ($data['type'] === 'work_request') {
+            $pwo = ImportPortalWorkOrder::run($integration, PortalWorkRequest::fromArray($request->all()));
+
+            return response()->json(['ok' => true, 'id' => $pwo->id, 'work_order' => $pwo->workOrder?->number]);
+        }
+
+        $pwo = PortalWorkOrder::query()->where('integration_id', $integration->id)->where('external_id', $data['external_id'])->first();
+        if (! $pwo instanceof PortalWorkOrder) {
+            return response()->json(['ok' => false, 'error' => 'unknown work request'], 404);
+        }
+
+        if ($data['type'] === 'payment') {
+            RecordPortalPayment::run($pwo, $request->input('paid_at'), $request->input('reference'));
+        } else {
+            $pwo->forceFill(['external_status' => (string) $request->input('status', $pwo->external_status), 'last_synced_at' => now()])->save();
+            PortalSyncEvent::log($integration, 'inbound', 'status', 'ok', 'Portal status: '.$pwo->external_status, $pwo, $request->all());
+        }
+
+        return response()->json(['ok' => true, 'id' => $pwo->id, 'status' => $pwo->fresh()?->status]);
     }
 
     private function authorized(Request $request): bool

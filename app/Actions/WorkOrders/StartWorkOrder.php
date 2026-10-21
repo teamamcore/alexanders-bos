@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\WorkOrders;
 
 use App\Actions\Communication\NotifyCustomer;
+use App\Actions\Portals\PushPortalStatus;
 use App\Models\User;
 use App\Models\WorkOrder;
 use App\States\WorkOrder\InProgress;
@@ -29,6 +30,8 @@ final class StartWorkOrder
         if ($notify) {
             NotifyCustomer::run($workOrder, 'work_started', $actor, [], true);
         }
+
+        PushPortalStatus::run($workOrder, 'in_progress', "Work started — {$actor->name}"); // SOW §3.14
 
         return $workOrder;
     }

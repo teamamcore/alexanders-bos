@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Invoicing;
 
+use App\Actions\Portals\PushPortalInvoice;
 use App\Models\Invoice;
 use DomainException;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -22,7 +23,11 @@ final class ApproveInvoice
         // SOW §3.9 — approval issues the invoice; due date follows the customer's terms.
         $days = (int) (config('batsons.payment_terms')[$invoice->terms ?: 'net_30'] ?? 30);
         $invoice->update(['status' => 'approved', 'issued_at' => today(), 'due_at' => today()->addDays($days)]);
+        $invoice->refresh();
 
-        return $invoice->refresh();
+        // SOW §3.14 — portal-issued work: the invoice goes back to the portal.
+        PushPortalInvoice::run($invoice);
+
+        return $invoice;
     }
 }
