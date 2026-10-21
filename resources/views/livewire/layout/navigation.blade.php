@@ -42,6 +42,18 @@ new class extends Component
         <div class="min-w-0 truncate text-sm font-semibold text-white">{{ bos_page_title() }}</div>
 
         <div class="ml-auto flex items-center gap-1">
+            {{-- §3.16 one search box for everything --}}
+            <form method="GET" action="{{ route('search') }}" class="hidden md:flex items-center mr-1">
+                <label class="relative block">
+                    <span class="pointer-events-none absolute inset-y-0 left-2 flex items-center text-slate-400"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+                    <input type="search" name="q" value="{{ request()->routeIs('search') ? request('q') : '' }}" placeholder="Search anything…" aria-label="Search"
+                           class="h-9 w-44 lg:w-64 rounded-lg border-0 bg-white/10 pl-8 pr-2 text-sm text-white placeholder:text-slate-400 focus:bg-white/15 focus:ring-2 focus:ring-accent-400">
+                </label>
+            </form>
+            <a href="{{ route('search') }}" class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white" title="Search"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
+            <a href="{{ route('help', ['from' => request()->route()?->getName()]) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white" title="Help">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>
+            </a>
             <div class="hidden lg:block mr-2 text-right leading-tight" x-data="{ now: new Date() }" x-init="setInterval(() => now = new Date(), 15000)">
                 <div class="text-[13px] font-medium text-white" x-text="now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })"></div>
                 <div class="text-[11px] text-slate-400" x-text="now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })"></div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\WorkOrders;
 
+use App\Actions\AI\SuggestTagsFor;
 use App\Actions\Time\ClockOut;
 use App\Models\TimeEntry;
 use App\Models\User;
@@ -48,6 +49,11 @@ final class CompleteWorkOrderQuestionnaire
         }
         $workOrder->forceFill(['work_performed' => $workPerformed, 'on_hold' => false, 'hold_reason' => null])->save();
 
-        return CompleteWorkOrder::run($workOrder->fresh() ?? $workOrder, $actor);
+        $completed = CompleteWorkOrder::run($workOrder->fresh() ?? $workOrder, $actor);
+
+        // §3.16 — tag from everything logged (notes, scope, work performed); never blocks completion.
+        rescue(fn () => SuggestTagsFor::run($completed, true), report: true);
+
+        return $completed;
     }
 }

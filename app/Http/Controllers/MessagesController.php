@@ -130,7 +130,7 @@ final class MessagesController extends Controller
     public function calls(Request $request): View
     {
         return view('ops.messages.calls', [
-            'calls' => CallTranscript::query()->with(['customer', 'job', 'recorder'])->latest('called_at')->take(100)->get(),
+            'calls' => CallTranscript::query()->with(['customer', 'job', 'recorder', 'tags'])->latest('called_at')->take(100)->get(),
             'customers' => Customer::query()->orderBy('name')->get(),
             'jobs' => Job::query()->with('customer')->latest()->take(50)->get(),
             'canRecord' => true,

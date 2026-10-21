@@ -12,7 +12,7 @@
             @if ($errors->any())<div class="lg:col-span-3 flash-err">{{ $errors->first() }}</div>@endif
 
             <div class="lg:col-span-2 card overflow-hidden">
-                <div class="card-head"><span class="card-title">Calls</span><span class="card-note">office + limited field use · usage billed per Exhibit A</span></div>
+                <div class="card-head"><span class="card-title">Calls</span><span class="card-note">summary · action items · sentiment · tags by the assistant · usage billed per Exhibit A</span></div>
                 <ul class="divide-y divide-slate-100">
                     @forelse ($calls as $c)
                         <li class="px-6 py-3">
@@ -20,7 +20,14 @@
                                 <div class="text-sm font-medium text-slate-900">{{ $c->customer?->name ?? $c->phone ?? 'Unknown caller' }} <span class="badge-gray ml-1">{{ $c->direction }}</span>@if ($c->status === 'pending')<span class="badge-amber ml-1">awaiting transcription</span>@endif</div>
                                 <div class="text-xs text-slate-400">{{ $c->called_at?->format('M j, g:ia') }}@if ($c->duration_seconds) · {{ (int) round($c->duration_seconds / 60) }} min @endif</div>
                             </div>
-                            @if ($c->summary)<div class="text-sm text-slate-700 mt-1">{{ $c->summary }}</div>@endif
+                            @if ($c->summary)<div class="text-sm text-slate-700 mt-1">{{ $c->summary }}@if ($c->sentiment) <span class="ml-1 {{ ['positive' => 'badge-green', 'negative' => 'badge-red'][$c->sentiment] ?? 'badge-gray' }}">{{ $c->sentiment }}</span>@endif</div>@endif
+                            @if ($c->action_items)
+                                <div class="mt-1 rounded-lg bg-slate-50 px-3 py-2">
+                                    <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Action items</div>
+                                    <ul class="mt-0.5 list-disc pl-4 text-sm text-slate-700">@foreach ($c->action_items as $item)<li>{{ $item }}</li>@endforeach</ul>
+                                </div>
+                            @endif
+                            @if ($c->tags->isNotEmpty())<div class="mt-1 flex flex-wrap gap-1">@foreach ($c->tags as $t)<a href="{{ route('search', ['q' => '#'.$t->slug]) }}" class="badge-amber">#{{ $t->slug }}</a>@endforeach</div>@endif
                             @if ($c->transcript)<details class="mt-1"><summary class="text-xs font-medium text-brand-700 cursor-pointer">Full transcript</summary><div class="mt-1 text-sm text-slate-600 whitespace-pre-line">{{ $c->transcript }}</div></details>@endif
                             <div class="text-[11px] text-slate-400 mt-1">{{ $c->recorder?->name }}@if ($c->job) · {{ $c->job->number }} {{ $c->job->title }}@endif @if ($c->audio_path) · <a class="text-brand-700" href="{{ Storage::disk('public')->url($c->audio_path) }}">audio</a>@endif · consent noted</div>
                         </li>
@@ -42,7 +49,7 @@
                     <div><x-input-label for="cw" value="When" /><x-text-input id="cw" name="called_at" type="datetime-local" class="mt-1 w-full" /></div>
                 </div>
                 <div><x-input-label for="ct" value="Transcript" /><textarea id="ct" name="transcript" rows="6" class="mt-1 w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" placeholder="Paste or dictate the transcript…"></textarea></div>
-                <div><x-input-label for="ca" value="…or upload audio" /><input id="ca" name="audio" type="file" accept="audio/*" class="mt-1 block w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-2 file:py-1 file:text-xs" /><p class="text-[11px] text-slate-400 mt-1">Audio is transcribed by the AI provider (SOW §3.16) and marked pending until then.</p></div>
+                <div><x-input-label for="ca" value="…or upload audio" /><input id="ca" name="audio" type="file" accept="audio/*" class="mt-1 block w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-2 file:py-1 file:text-xs" /><p class="text-[11px] text-slate-400 mt-1">Audio waits for the speech-to-text provider (<code>calls:transcribe</code>, SOW §3.16) and is marked pending until then. Typed transcripts are summarized, tagged and given action items immediately.</p></div>
                 <label class="flex items-start gap-2 text-xs text-slate-600"><input type="checkbox" name="consent_noted" value="1" required class="mt-0.5 rounded border-slate-300 text-brand-700 focus:ring-brand-500"> The caller was given the legally required recording/transcription notice and consented (Client responsibility, SOW §3.4).</label>
                 <x-primary-button>Save call</x-primary-button>
             </form>

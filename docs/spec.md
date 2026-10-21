@@ -124,6 +124,22 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   `PushPortalInvoice` (from ApproveInvoice; NTE flag), `RecordPortalPayment`,
   `UpdateIntegration`. `POST /webhooks/portals/{integration}` with per-portal token.
   `/portals` shows the five-included usage (blocked excluded), requests pipeline, sync log.
+- **3.16 AI-Assisted Features** — one `Assistant` contract (`Platform/AI`):
+  `ClaudeAssistant` (official `anthropic-ai/sdk`, structured JSON outputs,
+  `claude-opus-5-5`, low effort) when `ANTHROPIC_API_KEY` is set, otherwise
+  `OfflineAssistant` (keyword plans, rule-based tags, doc-section help, first-
+  sentence summaries) so every feature works without a key and in tests. `AI::run()`
+  meters every call into `ai_usages` (tokens, cost, duration, failures) for the
+  Exhibit A pass-through and falls back to offline if Claude errors. Actions:
+  `SearchEverything` (`/search` — top-bar box; AI-planned, tenant-scoped, role-
+  filtered search across customers, contacts, jobs, work orders + notes, parts by
+  nickname, invoices, texts, calls, `#tag`), `SuggestTagsFor` (controlled vocabulary
+  in `config/ai.php`; applied on WO completion and on demand from the WO page;
+  `Taggable` on WorkOrder/Job/CallTranscript), `AskHelp` (`/help`, the `?` button;
+  grounded in `docs/*` sections via `HelpCorpus`, aware of the current page),
+  `SummarizeCall` (summary, action items, sentiment, tags on every typed transcript;
+  `calls:transcribe` is the STT hook — Claude does not take audio, driver `none`).
+  Admin → AI usage shows the monthly meter.
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\Taggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -23,11 +24,11 @@ use Illuminate\Support\Carbon;
  */
 class CallTranscript extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, Taggable;
 
     protected $guarded = [];
 
-    protected $casts = ['consent_noted' => 'boolean', 'called_at' => 'datetime'];
+    protected $casts = ['consent_noted' => 'boolean', 'called_at' => 'datetime', 'action_items' => 'array', 'summarized_at' => 'datetime'];
 
     /** @return BelongsTo<Customer, $this> */
     public function customer(): BelongsTo

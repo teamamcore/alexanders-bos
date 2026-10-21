@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Role;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToTenant;
+use App\Models\Concerns\Taggable;
 use App\States\WorkOrder\WorkOrderState;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -35,7 +36,7 @@ use Spatie\ModelStates\HasStates;
  */
 class WorkOrder extends Model
 {
-    use Auditable, BelongsToTenant, HasStates;
+    use Auditable, BelongsToTenant, HasStates, Taggable;
 
     protected $guarded = [];
 

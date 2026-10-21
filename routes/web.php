@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AssistController;
 use App\Http\Controllers\BuildController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\EquipmentController;
@@ -164,6 +165,13 @@ Route::middleware(['auth'])->group(function () {
     // Build checklist (mirrors the Notion Build Timeline)
     Route::get('progress', [BuildController::class, 'index'])->name('build.index');
 
+    // Module 3.16 — AI-assisted search, help, tags (every role; results are role-filtered)
+    Route::get('search', [AssistController::class, 'search'])->name('search');
+    Route::get('help', [AssistController::class, 'help'])->name('help');
+    Route::post('work-orders/{workOrder}/tags/suggest', [AssistController::class, 'suggestTags'])->name('work-orders.tags.suggest');
+    Route::post('work-orders/{workOrder}/tags', [AssistController::class, 'addTag'])->name('work-orders.tags.add');
+    Route::delete('work-orders/{workOrder}/tags/{slug}', [AssistController::class, 'removeTag'])->name('work-orders.tags.remove');
+
     Route::view('profile', 'profile')->name('profile');
 
     // Module 3.13 — Administration & Security (administrators only)
@@ -183,6 +191,8 @@ Route::middleware(['auth'])->group(function () {
         // 3.10 — configurable reminder types
         Route::get('reminder-types', [AdminController::class, 'reminderTypes'])->name('reminder-types');
         Route::post('reminder-types', [AdminController::class, 'updateReminderTypes'])->name('reminder-types.update');
+        // 3.16 — metered AI usage (Exhibit A)
+        Route::get('ai-usage', [AssistController::class, 'usage'])->name('ai-usage');
     });
 });
 

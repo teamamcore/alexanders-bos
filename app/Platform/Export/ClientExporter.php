@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\Export;
 
+use App\Models\AiUsage;
 use App\Models\AssetIssue;
 use App\Models\AuditLog;
 use App\Models\CallTranscript;
@@ -37,6 +38,7 @@ use App\Models\ScopeRevision;
 use App\Models\ServiceLocation;
 use App\Models\StockAdjustment;
 use App\Models\Supplier;
+use App\Models\Tag;
 use App\Models\Tenant;
 use App\Models\TimeEntry;
 use App\Models\User;
@@ -110,6 +112,8 @@ class ClientExporter
         MessageTemplate::class,
         CustomerMessage::class,
         CallTranscript::class,
+        Tag::class,
+        AiUsage::class,
         UserMessage::class,
         InboundEmail::class,
         AuditLog::class,

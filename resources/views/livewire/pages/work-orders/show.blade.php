@@ -64,7 +64,7 @@ new #[Layout('layouts.app')] class extends Component
 
     public function with(): array
     {
-        $wo = $this->workOrder->fresh()->load(['job.customer.contacts', 'job.customer.corpPoc', 'job.serviceLocation.contact', 'assignee', 'crew.members', 'invoices', 'files.uploader', 'scopeRevisions.sourceNote', 'scopeRevisions.author']);
+        $wo = $this->workOrder->fresh()->load(['job.customer.contacts', 'job.customer.corpPoc', 'job.serviceLocation.contact', 'assignee', 'crew.members', 'invoices', 'files.uploader', 'scopeRevisions.sourceNote', 'scopeRevisions.author', 'tags']);
         $user = auth()->user();
         $isField = $user->isField();
 
@@ -294,6 +294,7 @@ new #[Layout('layouts.app')] class extends Component
                 <div class="text-sm text-slate-800 whitespace-pre-line">{{ $wo->customer_notes ?: $wo->job?->title }}</div>
                 @if ($wo->scope_office)<div class="redline text-sm whitespace-pre-line">{{ $wo->scope_office }}</div>@endif
                 <div class="text-[11px] text-slate-400">Read-only. Found more? Send a scope update — the office prices it and clears it with the customer first.</div>
+                @if ($wo->tags->isNotEmpty())<div class="flex flex-wrap gap-1 pt-1">@foreach ($wo->tags as $t)<span class="badge-amber">#{{ $t->slug }}</span>@endforeach</div>@endif
             </div>
 
             <form wire:submit="saveNote" class="card p-4 space-y-2">
@@ -380,6 +381,7 @@ new #[Layout('layouts.app')] class extends Component
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-4 space-y-4">
             @if ($flash)<div class="flash-ok">{{ $flash }}</div>@endif
+            @if (session('status'))<div class="flash-ok">{{ session('status') }}</div>@endif
             @if ($pendingScope->isNotEmpty())
                 <div class="flash-warn">
                     <div class="font-semibold">Scope update needs the office</div>
@@ -412,6 +414,19 @@ new #[Layout('layouts.app')] class extends Component
                     <div class="card p-4 space-y-3">
                         <div class="flex items-center justify-between"><div class="text-xs uppercase tracking-wide text-slate-400">Description of issue</div><span class="card-note">customer-stated · office intake</span></div>
                         <div class="text-sm text-slate-800 whitespace-pre-line">{{ $wo->customer_notes ?: ($wo->job?->title ?? '—') }}</div>
+                        {{-- §3.16 tags: AI-suggested + user-applied, searchable --}}
+                        <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                            @foreach ($wo->tags as $t)
+                                <span class="badge-amber inline-flex items-center gap-1"><a href="{{ route('search', ['q' => '#'.$t->slug]) }}">#{{ $t->slug }}</a>
+                                    <form method="POST" action="{{ route('work-orders.tags.remove', [$wo, $t->slug]) }}" class="inline">@csrf @method('DELETE')<button type="submit" class="text-amber-700/60 hover:text-amber-900" title="Remove tag">×</button></form></span>
+                            @endforeach
+                            <form method="POST" action="{{ route('work-orders.tags.add', $wo) }}" class="inline-flex items-center gap-1">@csrf
+                                <input name="tag" maxlength="30" placeholder="add tag" class="h-6 w-24 rounded-md border-slate-200 px-1.5 text-xs" required>
+                            </form>
+                            <form method="POST" action="{{ route('work-orders.tags.suggest', $wo) }}" class="inline">@csrf
+                                <button type="submit" class="rounded-md bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-800 hover:bg-brand-100" title="Suggest tags from the notes and scope">✦ Suggest tags</button>
+                            </form>
+                        </div>
                         <div class="border-t border-slate-100 pt-3 flex items-center justify-between"><div class="text-xs uppercase tracking-wide text-slate-400">Field findings</div><span class="card-note">tech discovery notes</span></div>
                         <ul class="space-y-1 text-sm">
                             @forelse ($internal->whereIn('kind', ['tech_note', 'field_finding', 'scope_update']) as $n)<li class="text-slate-700"><span class="text-xs text-slate-400">{{ $n->created_at?->format('M j g:ia') }} · {{ $n->author?->name }}</span> — {{ $n->body }}@if ($n->kind === 'scope_update')<span class="badge-amber ml-1">scope update</span>@endif</li>@empty<li class="text-slate-400">Nothing reported from the field yet.</li>@endforelse

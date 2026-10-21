@@ -305,6 +305,11 @@ class BatsonsSeeder extends Seeder
                 'qb_synced_at' => $issued->copy()->addHours(2),
             ]);
             Invoice::withoutGlobalScopes()->whereKey($inv->id)->update(['created_at' => $issued, 'updated_at' => $issued]);
+
+            // §3.16 — tags as the assistant would have applied them at completion
+            $wo->applyTags(array_merge(match ($type) {
+                'sewer' => ['sewer', 'drain'], 'backflow_testing' => ['backflow', 'recurring', 'inspection'], 'water_heater' => ['water-heater'], 'camera_inspection' => ['camera', 'sewer'], default => []
+            }, ['commercial']), 'ai');
         }
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Communication;
 
+use App\Actions\AI\SummarizeCall;
 use App\Models\CallTranscript;
 use App\Models\Customer;
 use App\Models\Job;
@@ -44,7 +45,7 @@ final class RecordCallTranscript
 
         $text = trim((string) $transcript);
 
-        return CallTranscript::create([
+        $call = CallTranscript::create([
             'customer_id' => $customer->id ?? $job->customer_id ?? $workOrder?->job?->customer_id,
             'job_id' => $job->id ?? $workOrder?->job_id,
             'work_order_id' => $workOrder?->id,
@@ -54,15 +55,18 @@ final class RecordCallTranscript
             'duration_seconds' => $durationSeconds,
             'audio_path' => $audioPath,
             'transcript' => $text !== '' ? $text : null,
-            'summary' => $text !== '' ? $this->summarize($text) : null,
+            'summary' => $text !== '' ? $this->firstSentence($text) : null,
             'status' => $text !== '' ? 'transcribed' : 'pending',
             'consent_noted' => true,
             'called_at' => $calledAt ?: now(),
         ]);
+
+        // §3.16 — summary, action items, sentiment, tags (Claude, or the offline assistant).
+        return $text !== '' ? SummarizeCall::run($call) : $call;
     }
 
-    /** First sentence or so — the AI summary arrives with §3.16. */
-    private function summarize(string $text): string
+    /** Placeholder summary until the assistant answers. */
+    private function firstSentence(string $text): string
     {
         $first = preg_split('/(?<=[.!?])\s+/', $text, 2)[0] ?? $text;
 

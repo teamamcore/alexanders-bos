@@ -41,12 +41,12 @@ it('renders the new chrome: top bar with page name and back, collapsible sidebar
         ->assertSee('Toggle sidebar')->assertSee('title="Back"', false)->assertSee('Collapse')
         ->assertSee('Work Orders')->assertSee('Contacts')->assertSee('Administration');
 
-    // plumbing set is default: the restroom-symbol contacts glyph has a dashed divider line
-    $r->assertSee('stroke-dasharray="2 2"', false);
+    // plumbing set is default: the restroom-symbol contacts glyph has a centre divider line
+    $r->assertSee('<path d="M12 3.5v17"/>', false);
 
     $this->tenant->update(['settings' => array_merge($this->tenant->settings, ['icon_set' => 'standard'])]);
     app()->instance('currentTenant', $this->tenant->fresh());
-    $this->get('/dashboard')->assertOk()->assertDontSee('stroke-dasharray="2 2"', false);
+    $this->get('/dashboard')->assertOk()->assertDontSee('<path d="M12 3.5v17"/>', false);
 
     // field users: no Contacts / Reports / Admin in the sidebar, bottom tab bar present
     $this->actingAs($this->marcus)->get('/dashboard')->assertOk()->assertDontSee('Administration')->assertSee('Clock');
