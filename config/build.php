@@ -71,6 +71,8 @@ return [
             'target' => ['2026-10-28', '2026-11-03'], 'notes' => 'Up to 5 (Service Channel, Paramark).'],
         ['ref' => 'SOW §3.16', 'phase' => 'Build', 'name' => '3.16 AI-Assisted Features', 'status' => 'not_started',
             'target' => ['2026-11-01', '2026-11-03'], 'notes' => 'AI search/tagging/help, call transcription.'],
+        ['ref' => 'SOW §3.4 / Ex. A', 'phase' => 'Build', 'name' => 'Twilio A2P 10DLC + phone lines (port & connect) — kick off', 'status' => 'not_started',
+            'target' => ['2026-10-26', '2026-11-20'], 'notes' => 'TIME-SENSITIVE: A2P brand + campaign approval and number porting take 1–4 weeks; start Mon 10/26 so texting, call transcription and the inbound email address are live before Turnover.'],
         ['ref' => 'SOW §4', 'phase' => 'Build', 'name' => 'Data migration (QuickBooks, 4 yrs)', 'status' => 'not_started',
             'target' => ['2026-10-28', '2026-11-17'], 'notes' => 'Import customers, items, open A/R, WO records.'],
 
