@@ -17,7 +17,7 @@ Design source of truth: `docs/design-notes-2026-10.md` and the whiteboard photos
 No database server is needed — local runs use SQLite.
 
 ```bash
-git clone https://github.com/theconnmandavid-code/batsons-prototype.git
+git clone https://github.com/teamamcore/batsons-prototype.git
 cd batsons-prototype
 
 composer install
@@ -138,5 +138,5 @@ new one).
 
 ## Repository
 
-`main` on `github.com/theconnmandavid-code/batsons-prototype` (private). Heritage
+`main` on `github.com/teamamcore/batsons-prototype` (private). Heritage
 Paintworks is a separate project and must never be mixed into this repo.
