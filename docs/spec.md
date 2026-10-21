@@ -70,7 +70,7 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   **qualification matrix** (`/admin/qualifications`, `SetQualification`, audited).
   `App\Support\SchedulingIndicators` feeds level + cert health into the dispatch
   board per work order `work_type` (SOW §3.3). Field users see only their own profile.
-- **Build checklist** — `/build` mirrors the Notion Build Timeline from
+- **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.
 

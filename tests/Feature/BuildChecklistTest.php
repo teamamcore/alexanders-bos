@@ -20,7 +20,7 @@ beforeEach(function () {
 
 it('shows every timeline item with its status and links done modules to their screens', function () {
     $this->actingAs($this->admin);
-    $r = $this->get('/build')->assertOk()->assertSee('Build checklist');
+    $r = $this->get('/progress')->assertOk()->assertSee('Build checklist');
 
     foreach (config('build.items') as $item) {
         $r->assertSee(e($item['name']), false);
@@ -30,7 +30,7 @@ it('shows every timeline item with its status and links done modules to their sc
 
 it('hides admin-only links from office users but still shows the checklist', function () {
     $office = User::factory()->create(['tenant_id' => Tenant::first()->id, 'role' => Role::Office]);
-    $this->actingAs($office)->get('/build')->assertOk()->assertSee('Open Team')->assertDontSee('Open Admin');
+    $this->actingAs($office)->get('/progress')->assertOk()->assertSee('Open Team')->assertDontSee('Open Admin');
 });
 
 it('every linked route in the checklist exists', function () {

@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('team/{employee}/background-check', [TeamController::class, 'updateBackgroundCheck'])->middleware('role:administrator')->name('team.background');
 
     // Build checklist (mirrors the Notion Build Timeline)
-    Route::get('build', [BuildController::class, 'index'])->name('build.index');
+    Route::get('progress', [BuildController::class, 'index'])->name('build.index');
 
     Route::view('profile', 'profile')->name('profile');
 

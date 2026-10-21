@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
 |--------------------------------------------------------------------------
 | Build checklist — mirrors the Notion "Batsons BOS — Project Plan" Build
-| Timeline, simplified and rendered in-app at /build so the team can see
+| Timeline, simplified and rendered in-app at /progress so the team can see
 | what is done, what is in progress, and open the live screen for each
 | shipped module. Keep this in sync with Notion whenever a status changes.
 |
