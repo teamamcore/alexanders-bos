@@ -1,3 +1,9 @@
-<svg {{ $attributes->merge(['class' => 'h-5 w-5']) }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-<ellipse cx="7" cy="8" rx="3.5" ry="5"/><ellipse cx="7" cy="8" rx="1.2" ry="1.8"/><path d="M7 3h8c1.9 0 3.5 2.2 3.5 5v13H10V13"/><path d="M10 13h8.5"/><rect x="10" y="13" width="8.5" height="2.2" fill="currentColor" stroke="none"/><rect x="11" y="4.5" width="7" height="2.2" fill="currentColor" stroke="none"/>
+<svg {{ $attributes->merge(['class' => 'h-5 w-5']) }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M6 10m-3 0a3 7 0 1 0 6 0a3 7 0 1 0 -6 0"/>
+<path d="M21 10c0-3.866-1.343-7-3-7"/>
+<path d="M6 3h12"/>
+<path d="M21 10v10l-3-1l-3 2l-3-3l-3 2v-10"/>
+<path d="M6 10h.01"/>
+<rect x="10.1" y="11.7" width="9.8" height="2.6" rx="0.4" fill="currentColor" stroke="none"/>
+<path d="M12.5 16.6h.01M15.5 16.6h.01"/>
 </svg>
