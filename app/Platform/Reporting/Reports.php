@@ -120,20 +120,33 @@ final class Reports
      * Profitability by job type (work order work_type), over work orders that have
      * cost or revenue in the period.
      *
-     * @return Collection<array-key, array{type: string, label: string, count: int, labor_hours: float, labor: float, materials: float, equipment: float, cost: float, revenue: float, profit: float, margin: float|null}>
+     * @return Collection<array-key, array<string, mixed>> type, label, count + the JobCosting cost shape
      */
     public static function profitabilityByType(?Carbon $from = null, ?Carbon $to = null): Collection
     {
         $wos = self::workOrdersInPeriod($from, $to);
+        /** @var array<string, string> $labels */
         $labels = config('batsons.work_types', []);
 
         return $wos->groupBy(fn (WorkOrder $wo) => $wo->work_type ?: 'untyped')
-            ->map(function (Collection $group, string $type) use ($labels) {
-                $t = JobCosting::total($group->map(fn (WorkOrder $wo) => JobCosting::forWorkOrder($wo)));
-
-                return ['type' => $type, 'label' => $labels[$type] ?? ($type === 'untyped' ? 'Untyped' : ucwords(str_replace('_', ' ', $type))), 'count' => $group->count()] + $t;
-            })
+            ->map(fn (Collection $group, string $type) => self::typeRow($group, $type, $labels))
             ->sortByDesc('profit');
+    }
+
+    /**
+     * @param  Collection<int, WorkOrder>  $group
+     * @param  array<string, string>  $labels
+     * @return array<string, mixed>
+     */
+    private static function typeRow(Collection $group, string $type, array $labels): array
+    {
+        $t = JobCosting::total($group->map(fn (WorkOrder $wo) => JobCosting::forWorkOrder($wo)));
+
+        return array_merge($t, [
+            'type' => $type,
+            'label' => (string) ($labels[$type] ?? ($type === 'untyped' ? 'Untyped' : ucwords(str_replace('_', ' ', $type)))),
+            'count' => $group->count(),
+        ]);
     }
 
     /**
