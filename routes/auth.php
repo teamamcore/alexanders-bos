@@ -9,10 +9,11 @@ use Livewire\Volt\Volt;
 // SOW §3.13 — passkey / device-biometric sign-in (spatie/laravel-passkeys).
 Route::passkeys();
 
-Route::middleware('guest')->group(function () {
-    Volt::route('register', 'pages.auth.register')
-        ->name('register');
+// SOW §3.13 — no public self-registration: administrators provision users
+// from Administration → Users. (The welcome page hides its Register link via
+// Route::has('register').)
 
+Route::middleware('guest')->group(function () {
     Volt::route('login', 'pages.auth.login')
         ->name('login');
 

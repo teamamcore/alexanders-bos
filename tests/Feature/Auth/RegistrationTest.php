@@ -2,26 +2,26 @@
 
 namespace Tests\Feature\Auth;
 
-use Livewire\Volt\Volt;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
 
-test('registration screen can be rendered', function () {
-    $response = $this->get('/register');
+// SOW §3.13 — public self-registration is disabled; administrators create users.
 
-    $response
-        ->assertOk()
-        ->assertSeeVolt('pages.auth.register');
+test('the registration screen is not available', function () {
+    $this->get('/register')->assertNotFound();
+    expect(Route::has('register'))->toBeFalse();
 });
 
-test('new users can register', function () {
-    $component = Volt::test('pages.auth.register')
-        ->set('name', 'Test User')
-        ->set('email', 'test@example.com')
-        ->set('password', 'password')
-        ->set('password_confirmation', 'password');
+test('nobody can register through the old endpoint', function () {
+    $this->post('/register', [
+        'name' => 'Test User', 'email' => 'test@example.com',
+        'password' => 'password', 'password_confirmation' => 'password',
+    ])->assertNotFound();
 
-    $component->call('register');
+    expect(User::where('email', 'test@example.com')->exists())->toBeFalse();
+    $this->assertGuest();
+});
 
-    $component->assertRedirect(route('dashboard', absolute: false));
-
-    $this->assertAuthenticated();
+test('the welcome page no longer offers a register link', function () {
+    $this->get('/')->assertOk()->assertSee('Log in')->assertDontSee('>Register<', false);
 });
