@@ -1,0 +1,7 @@
+Date,WO #,Customer,Service Address,Description,Work Type,Tech,Hours,Invoice #,Amount,Status
+10/01/2026,WO-7781,Acme Industrial Park,"1200 Industrial Blvd Bldg C, Springfield",Annual backflow test on 4 RPZ assemblies; replaced #2 relief valve,Backflow testing,Marcus Reyes,3.5,INV-9001,1240.00,Complete
+08/07/2026,WO-7702,Greenway Apartments,"77 Greenway Dr, Springfield",Repipe unit 14 bathroom supply lines in PEX,Repipe,Dana Whitfield,11,INV-8990,3860.50,Complete
+06/13/2026,WO-7650,Maple Street Bakery,"14 Maple St, Springfield",Pump and jet grease trap; camera downstream line,Sewer,Dana Whitfield,2.5,INV-8950,485.00,Complete
+10/16/2026,WO-7795,Jordan Family,"9 Birch Ln, Springfield","Replace kitchen faucet, customer-supplied",,Marcus Reyes,1.5,INV-9010,312.00,Complete
+10/23/2017,WO-100,Old Mill Diner,2 Mill Rd,Water heater swap,Water heater,Someone Else,4,INV-1002,220.00,Complete
+10/12/2026,WO-7790,Greenway Apartments,,Clear main line stoppage building B,Sewer,Chris Nobody,2,INV-9009,,Complete

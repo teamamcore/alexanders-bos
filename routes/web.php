@@ -10,6 +10,7 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OpsController;
 use App\Http\Controllers\PartsController;
@@ -193,6 +194,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('reminder-types', [AdminController::class, 'updateReminderTypes'])->name('reminder-types.update');
         // 3.16 — metered AI usage (Exhibit A)
         Route::get('ai-usage', [AssistController::class, 'usage'])->name('ai-usage');
+        // SOW §4 — data migration (QuickBooks / spreadsheet exports)
+        Route::get('migration', [MigrationController::class, 'index'])->name('migration');
+        Route::post('migration', [MigrationController::class, 'upload'])->name('migration.upload');
+        Route::post('migration/{batch}/commit', [MigrationController::class, 'commit'])->name('migration.commit');
+        Route::get('migration/{batch}/issues.csv', [MigrationController::class, 'issues'])->name('migration.issues');
+        Route::get('migration/samples/{kind}', [MigrationController::class, 'sample'])->name('migration.sample');
     });
 });
 

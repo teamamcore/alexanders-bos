@@ -1,0 +1,8 @@
+Date,Num,Customer,Transaction Type,Due Date,Amount,Open Balance,Status,Terms,Memo/Description
+10/01/2026,INV-9001,Acme Industrial Park,Invoice,10/31/2026,"$1,240.00","$1,240.00",Open,Net 30,Backflow test — 4 assemblies
+08/07/2026,INV-8990,Greenway Apartments,Invoice,08/22/2026,"$3,860.50","$1,860.50",Partially paid,Net 15,Unit 14 repipe
+06/13/2026,INV-8950,Maple Street Bakery,Invoice,06/13/2026,$485.00,$0.00,Paid,Due on receipt,Grease trap service
+09/11/2026,PMT-5521,Acme Industrial Park,Payment,,-$685.00,,Closed,,
+10/16/2026,INV-9010,Jordan Family,Invoice,11/15/2026,$312.00,$312.00,Open,Net 30,Kitchen faucet replacement
+10/23/2017,INV-1002,Old Mill Diner,Invoice,11/22/2017,$220.00,$0.00,Paid,Net 30,Too old for the window
+10/09/2026,,Riverside Dental,Invoice,11/08/2026,abc,,Open,Net 15,Bad amount

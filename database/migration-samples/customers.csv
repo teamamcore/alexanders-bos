@@ -1,0 +1,11 @@
+Batsons Plumbing
+Customer Contact List
+
+Customer,Phone Numbers,Email,Full Name,Billing Address,Shipping Address,Terms,Customer Type
+Acme Industrial Park,(555) 214-7788,facilities@acme-industrial.example,Pat Morales,"1200 Industrial Blvd, Springfield","1200 Industrial Blvd, Springfield",Net 30,Commercial
+Acme Industrial Park:Building C,(555) 214-7790,pat.morales@acme-industrial.example,Pat Morales,"1200 Industrial Blvd, Springfield","1200 Industrial Blvd Bldg C, Springfield",Net 30,Commercial
+Greenway Apartments,(555) 410-2200,manager@greenway-apts.example,Lee Chen,"77 Greenway Dr, Springfield","77 Greenway Dr, Springfield",Net 15,Property Management
+Maple Street Bakery,(555) 612-0033,hello@maplebakery.example,Sam Ortiz,"14 Maple St, Springfield","14 Maple St, Springfield",Due on receipt,Commercial
+Jordan Family,(555) 777-1212,,,"9 Birch Ln, Springfield",,Net 30,Residential
+,(555) 000-0000,noname@example.com,,,,Net 30,
+Total,,,,,,,

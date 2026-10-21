@@ -76,8 +76,8 @@ return [
             'target' => ['2026-11-01', '2026-11-03'], 'notes' => 'One search box for everything (AI-planned), tag suggestions on work orders/calls, in-app help (?) grounded in the guide, call summaries + action items, metered usage (Admin → AI usage). Claude via ANTHROPIC_API_KEY; offline fallback without it. Audio transcription waits on an STT provider.'],
         ['ref' => 'SOW §3.4 / Ex. A', 'phase' => 'Build', 'name' => 'Twilio A2P 10DLC + phone lines (port & connect) — kick off', 'status' => 'not_started',
             'target' => ['2026-10-26', '2026-11-20'], 'notes' => 'TIME-SENSITIVE: A2P brand + campaign approval and number porting take 1–4 weeks; start Mon 10/26 so texting, call transcription and the inbound email address are live before Turnover.'],
-        ['ref' => 'SOW §4', 'phase' => 'Build', 'name' => 'Data migration (QuickBooks, 4 yrs)', 'status' => 'not_started',
-            'target' => ['2026-10-28', '2026-11-17'], 'notes' => 'Import customers, items, open A/R, WO records.'],
+        ['ref' => 'SOW §4', 'phase' => 'Build', 'name' => 'Data migration (QuickBooks, 4 yrs)', 'status' => 'done', 'link' => ['route' => 'admin.migration', 'label' => 'Open Data import'],
+            'target' => ['2026-10-28', '2026-11-17'], 'notes' => 'Import tooling shipped: QuickBooks/spreadsheet CSV exports → customers (with sub-customer sites + contacts), items → parts, invoices → open A/R + paid history, work order log → jobs + completed WOs linked to invoices. Dry run → issues report (the SOW §4 "could not be imported" summary) → commit; re-runs update, 8-year window. QuickBooks Online live pull is guarded until Batsons grants admin access (§9). The real import runs when Batsons hands over their exports.'],
 
         ['ref' => 'Week 5', 'phase' => 'Test', 'name' => 'Walkthrough + field test', 'status' => 'not_started',
             'target' => ['2026-11-18', '2026-11-24'], 'notes' => 'Up to 2 revision rounds; live field test.'],

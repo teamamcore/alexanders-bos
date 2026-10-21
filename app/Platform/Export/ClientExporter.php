@@ -25,6 +25,8 @@ use App\Models\InboundEmail;
 use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\MessageTemplate;
+use App\Models\MigrationBatch;
+use App\Models\MigrationRecord;
 use App\Models\MileageReading;
 use App\Models\Part;
 use App\Models\PortalSyncEvent;
@@ -114,6 +116,8 @@ class ClientExporter
         CallTranscript::class,
         Tag::class,
         AiUsage::class,
+        MigrationBatch::class,
+        MigrationRecord::class,
         UserMessage::class,
         InboundEmail::class,
         AuditLog::class,

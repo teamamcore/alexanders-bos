@@ -140,6 +140,21 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   `SummarizeCall` (summary, action items, sentiment, tags on every typed transcript;
   `calls:transcribe` is the STT hook — Claude does not take audio, driver `none`).
   Admin → AI usage shows the monthly meter.
+- **§4 Data migration** — `Platform/Migration`: `CsvFile` (QuickBooks Online /
+  Desktop / spreadsheet CSV exports: BOM, delimiter sniffing, report title rows,
+  "Total" footers, header aliases per kind), `Importer` (per-row outcome imported /
+  updated / skipped with reasons; dry run = full pass in a rolled-back transaction;
+  `migration_records` map source key → model so re-runs update; `quickbooks.years`
+  window, default 8), four `Kinds`: `Customers` ("Parent:Sub-customer" → service
+  location, contact, terms, segment), `Items` → Parts (sub-items → category, bundles
+  skipped), `Receivables` → Invoices (open balance → open A/R `approved`, else paid
+  history; payments/credits skipped), `WorkOrders` (Batsons' WO log → customer → site
+  → closed Job → `complete` WO, tech by name, linked to the invoice by number).
+  `QuickBooksOnline` reports connection status and guards the live pull until the
+  Client grants OAuth access (`QBO_*` env). `RunImport` action; Admin → Data import
+  (`/admin/migration`: upload, dry run → commit, issues CSV = the SOW §4 "records that
+  could not be imported" summary, samples); `import:quickbooks {dir} --commit` for
+  bulk folders. Samples in `database/migration-samples/`.
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

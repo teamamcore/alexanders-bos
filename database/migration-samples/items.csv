@@ -1,0 +1,8 @@
+Product/Service,SKU,Type,Sales Description,Sales Price,Cost,Qty on Hand,Reorder Point,Income Account
+Backflow Test,,Service,Annual backflow assembly test and report,185.00,,,,Services
+Hourly Labor,,Service,Plumbing labor per hour,145.00,,,,Services
+Fittings:3/4" Ball Valve,BV-34,Inventory,Brass full-port ball valve 3/4",24.50,11.80,36,10,Materials
+Fittings:1/2" Copper Elbow,CU-12-90,Inventory,Wrought copper 90° elbow,1.90,0.62,220,100,Materials
+Water Heater 50 gal gas,WH-50G,Non-inventory,"Bradford White 50 gal, atmospheric vent","1,480.00",965.00,,,Materials
+Service Call Bundle,,Bundle,Trip + first hour,245.00,,,,Services
+Old Flux,FLX-OLD,Inventory,Discontinued flux,4.00,2.00,0,,Materials
