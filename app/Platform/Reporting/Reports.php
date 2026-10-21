@@ -120,7 +120,7 @@ final class Reports
      * Profitability by job type (work order work_type), over work orders that have
      * cost or revenue in the period.
      *
-     * @return Collection<array-key, array<string, mixed>> type, label, count + the JobCosting cost shape
+     * @return Collection<array-key, array{type: string, label: string, count: int, labor_hours: float, labor: float, materials: float, equipment: float, cost: float, revenue: float, profit: float, margin: float|null}>
      */
     public static function profitabilityByType(?Carbon $from = null, ?Carbon $to = null): Collection
     {
