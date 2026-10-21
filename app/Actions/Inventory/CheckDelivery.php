@@ -9,6 +9,7 @@ use App\Models\Part;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\WorkOrder;
+use App\Platform\Notifications\Notifier;
 use DomainException;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -52,6 +53,13 @@ final class CheckDelivery
         if ($check->usable() > 0) {
             AdjustStock::run($part, $check->usable(), 'received', $actor, $workOrder,
                 'Delivery '.($reference ?: '#'.$check->id).($damaged > 0 ? " ({$damaged} damaged)" : ''));
+        }
+
+        // SOW §3.12 — office hears about shortages / damage on delivery.
+        if ($check->shortage() > 0 || $damaged > 0) {
+            Notifier::send(Notifier::office($part->tenant_id, $actor->id), 'delivery', "Delivery issue: {$part->name}",
+                trim(($check->shortage() ? "short {$check->shortage()}" : '').($check->shortage() && $damaged ? ', ' : '').($damaged ? "{$damaged} damaged" : '')).($reference ? " ({$reference})" : ''),
+                route('parts.show', $part), ['delivery_check_id' => $check->id]);
         }
 
         return $check;

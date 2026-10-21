@@ -18,6 +18,10 @@ return [
     // Shared secret the texting platform sends with inbound webhooks (POST /webhooks/sms).
     'inbound_token' => env('MESSAGING_INBOUND_TOKEN', 'change-me'),
 
+    // SOW §3.12 — the Client's one inbound email address; the mail provider
+    // forwards it to POST /webhooks/email with the shared token above.
+    'inbound_email_address' => env('MESSAGING_INBOUND_EMAIL', 'office@batsonsplumbing.com'),
+
     // Appended to outbound texts where required (opt-out language).
     'sms_footer' => env('MESSAGING_SMS_FOOTER', 'Reply STOP to opt out.'),
 ];

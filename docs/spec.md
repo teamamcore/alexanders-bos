@@ -88,6 +88,14 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   `NotifyCustomer` fires on schedule / reschedule / `StartWorkOrder` /
   `CompleteWorkOrder`; field users send on-the-way, arrived and free text from the
   job page. Inbound replies arrive at `POST /webhooks/sms` (shared token).
+- **3.12 Notifications & Messaging** — Laravel database notifications via
+  `Platform/Notifications/Notifier` + `Notifications/InApp` (kind/title/body/url);
+  bell + `/notifications`. Fired from ScheduleWorkOrder, RescheduleWorkOrder,
+  RecordInboundMessage, ReportAssetIssue, CheckDelivery, SendUserMessage,
+  IngestInboundEmail, and the `notifications:digest` command (07:00 daily, once
+  per topic per day). `/inbox` is user-to-user messaging (`user_messages`);
+  `/inbox/email` is the Client inbound address queue (`inbound_emails`, fed by
+  `POST /webhooks/email`, routed by WO/job number in subject → customer email → contact email, else manual).
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

@@ -7,6 +7,7 @@ namespace App\Actions\WorkOrders;
 use App\Actions\Communication\NotifyCustomer;
 use App\Models\User;
 use App\Models\WorkOrder;
+use App\Platform\Notifications\Notifier;
 use App\States\WorkOrder\NewWorkOrder;
 use App\States\WorkOrder\Scheduled;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -35,6 +36,11 @@ final class ScheduleWorkOrder
 
         // SOW §3.4 — customer receives the scheduled day (automatic, tenant switchable).
         NotifyCustomer::run($workOrder, 'scheduled', null, [], true);
+
+        // SOW §3.3/§3.12 — the tech is told about the new assignment.
+        Notifier::send($assignee, 'assignment', "New assignment: {$workOrder->number}",
+            trim(($workOrder->job->customer->name ?? '')." · {$date} ".str_replace('_', ' ', $window)),
+            route('jobs.show', $workOrder->job_id), ['work_order_id' => $workOrder->id]);
 
         return $workOrder;
     }

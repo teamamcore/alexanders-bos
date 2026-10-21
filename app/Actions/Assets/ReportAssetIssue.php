@@ -8,7 +8,9 @@ use App\Models\AssetIssue;
 use App\Models\Equipment;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Platform\Notifications\Notifier;
 use DomainException;
+use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 /**
@@ -36,6 +38,12 @@ final class ReportAssetIssue
         if ($severity === 'major') {
             $asset->forceFill(['status' => 'down'])->save();
         }
+
+        // SOW §3.12 — office is told about field issue / damage reports.
+        $label = $asset instanceof Vehicle ? $asset->label() : $asset->name;
+        Notifier::send(Notifier::office($asset->tenant_id, $reporter->id), 'issue', ucfirst($severity)." issue: {$label}",
+            Str::limit(trim($description), 120).' — '.$reporter->name,
+            $asset instanceof Vehicle ? route('fleet.show', $asset) : route('equipment.show', $asset), ['asset_issue_id' => $issue->id]);
 
         return $issue;
     }

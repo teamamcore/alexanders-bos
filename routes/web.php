@@ -6,7 +6,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuildController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FleetController;
+use App\Http\Controllers\InboxController;
 use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OpsController;
 use App\Http\Controllers\PartsController;
 use App\Http\Controllers\TeamController;
@@ -100,6 +102,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('messages/calls', [MessagesController::class, 'calls'])->name('messages.calls');          // office + limited field
     Route::post('messages/calls', [MessagesController::class, 'storeCall'])->name('messages.calls.store');
 
+    // Module 3.12 — Notifications & Messaging
+    Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/read-all', [NotificationsController::class, 'readAll'])->name('notifications.readAll');
+    Route::post('notifications/{id}/read', [NotificationsController::class, 'read'])->name('notifications.read');
+    Route::get('inbox', [InboxController::class, 'index'])->name('inbox.index');
+    Route::get('inbox/email', [InboxController::class, 'email'])->middleware('role:office,administrator')->name('inbox.email');
+    Route::post('inbox/email/{email}/route', [InboxController::class, 'routeEmail'])->middleware('role:office,administrator')->name('inbox.email.route');
+    Route::get('inbox/{with}', [InboxController::class, 'index'])->name('inbox.thread');
+    Route::post('inbox', [InboxController::class, 'send'])->name('inbox.send');
+
     // Build checklist (mirrors the Notion Build Timeline)
     Route::get('progress', [BuildController::class, 'index'])->name('build.index');
 
@@ -123,5 +135,6 @@ Route::middleware(['auth'])->group(function () {
 
 // Texting-platform webhook (token-protected, no session) — SOW §3.4.
 Route::post('webhooks/sms', [WebhookController::class, 'inboundSms'])->name('webhooks.sms');
+Route::post('webhooks/email', [WebhookController::class, 'inboundEmail'])->name('webhooks.email');
 
 require __DIR__.'/auth.php';

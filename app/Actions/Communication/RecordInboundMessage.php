@@ -7,6 +7,8 @@ namespace App\Actions\Communication;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerMessage;
+use App\Platform\Notifications\Notifier;
+use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 /**
@@ -36,7 +38,7 @@ final class RecordInboundMessage
 
         $latest = CustomerMessage::withoutGlobalScopes()->where('customer_id', $customer->id)->outbound()->latest()->first();
 
-        return CustomerMessage::create([
+        $message = CustomerMessage::create([
             'tenant_id' => $customer->tenant_id,
             'customer_id' => $customer->id,
             'contact_id' => $contact?->id,
@@ -51,6 +53,12 @@ final class RecordInboundMessage
             'provider_ref' => $providerRef,
             'sent_at' => now(),
         ]);
+
+        // SOW §3.12 — office sees customer replies as in-app notifications.
+        Notifier::send(Notifier::office($customer->tenant_id), 'customer_reply', "Reply from {$customer->name}", Str::limit(trim($body), 120),
+            $latest?->job_id ? route('jobs.show', $latest->job_id) : route('messages.index'), ['customer_message_id' => $message->id]);
+
+        return $message;
     }
 
     public static function digits(string $phone): string

@@ -20,6 +20,7 @@ use App\Models\EquipmentMaintenance;
 use App\Models\EquipmentUsage;
 use App\Models\Gate;
 use App\Models\GateOverride;
+use App\Models\InboundEmail;
 use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\MessageTemplate;
@@ -35,6 +36,7 @@ use App\Models\Supplier;
 use App\Models\Tenant;
 use App\Models\TimeEntry;
 use App\Models\User;
+use App\Models\UserMessage;
 use App\Models\Vehicle;
 use App\Models\VehicleMaintenance;
 use App\Models\VendorPortalIntegration;
@@ -96,6 +98,8 @@ class ClientExporter
         MessageTemplate::class,
         CustomerMessage::class,
         CallTranscript::class,
+        UserMessage::class,
+        InboundEmail::class,
         AuditLog::class,
     ];
 

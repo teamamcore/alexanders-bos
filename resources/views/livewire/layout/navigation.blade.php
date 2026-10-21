@@ -27,11 +27,14 @@ new class extends Component
         ['route' => 'team.index',       'is' => 'team.*',      'label' => __('Team'),             'navigate' => false],
         ['route' => 'parts.index',      'is' => ['parts.*', 'equipment.*', 'fleet.*'], 'label' => __('Assets'), 'navigate' => false],
         ['route' => auth()->user()->isField() ? 'messages.calls' : 'messages.index', 'is' => 'messages.*', 'label' => __('Messages'), 'navigate' => false],
+        ['route' => 'inbox.index',      'is' => 'inbox.*',     'label' => __('Inbox'),            'navigate' => false],
         ['route' => 'build.index',      'is' => 'build.*',     'label' => __('Build'),            'navigate' => false],
     ];
     if (auth()->user()->isAdministrator()) {
         $links[] = ['route' => 'admin.users', 'is' => 'admin.*', 'label' => __('Admin'), 'navigate' => false];
     }
+    $unreadNotifications = auth()->user()->unreadNotifications()->count();
+    $unreadMessages = \App\Models\UserMessage::where('recipient_id', auth()->id())->whereNull('read_at')->count();
 @endphp
 
 <nav x-data="{ open: false }" class="bg-brand-950 text-white shadow-md">
@@ -48,7 +51,7 @@ new class extends Component
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-7 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-5 sm:-my-px sm:ms-8 sm:flex">
                     @foreach ($links as $l)
                         <x-nav-link :href="route($l['route'])" :active="request()->routeIs($l['is'])" :navigate="$l['navigate']">
                             {{ $l['label'] }}
@@ -58,7 +61,16 @@ new class extends Component
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-1">
+                {{-- SOW §3.12 — notification bell --}}
+                <a href="{{ route('notifications.index') }}" class="relative inline-flex items-center justify-center h-9 w-9 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition" title="Notifications">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+                    @if ($unreadNotifications)<span class="notif-badge absolute -top-0.5 -right-0.5 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-accent-500 text-[10px] font-bold text-white flex items-center justify-center">{{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}</span>@endif
+                </a>
+                <a href="{{ route('inbox.index') }}" class="relative inline-flex items-center justify-center h-9 w-9 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition" title="Inbox">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+                    @if ($unreadMessages)<span class="absolute -top-0.5 -right-0.5 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-brand-400 text-[10px] font-bold text-white flex items-center justify-center">{{ $unreadMessages }}</span>@endif
+                </a>
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm font-medium text-slate-200 hover:text-white hover:bg-white/10 focus:outline-none transition">

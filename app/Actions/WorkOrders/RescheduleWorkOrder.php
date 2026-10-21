@@ -7,6 +7,7 @@ namespace App\Actions\WorkOrders;
 use App\Actions\Communication\NotifyCustomer;
 use App\Models\ScheduleChange;
 use App\Models\WorkOrder;
+use App\Platform\Notifications\Notifier;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 /**
@@ -33,6 +34,12 @@ final class RescheduleWorkOrder
 
         // SOW §3.4 — optional customer notice on reschedule (automatic, tenant switchable).
         NotifyCustomer::run($workOrder, 'rescheduled', null, [], true);
+
+        // SOW §3.3/§3.12 — the assigned tech is told the day moved.
+        if ($workOrder->assignee) {
+            Notifier::send($workOrder->assignee, 'schedule_change', "Schedule changed: {$workOrder->number}",
+                "Now {$newDate}".($reason ? " — {$reason}" : ''), route('jobs.show', $workOrder->job_id), ['work_order_id' => $workOrder->id]);
+        }
 
         return $workOrder;
     }
