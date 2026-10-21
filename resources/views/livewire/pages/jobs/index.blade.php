@@ -35,13 +35,13 @@ new #[Layout('layouts.app')] class extends Component
 
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Jobs') }}</h2>
+        <h2 class="page-title">{{ __('Jobs') }}</h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         {{-- Intake form --}}
-        <div class="bg-white shadow-sm sm:rounded-lg p-6">
-            <h3 class="font-semibold text-gray-900 mb-4">New job</h3>
+        <div class="card p-6">
+            <h3 class="font-semibold text-slate-900 mb-4">New job</h3>
             <form wire:submit="createJob" class="grid gap-4 sm:grid-cols-3 sm:items-end">
                 <div>
                     <x-input-label for="customer_name" :value="__('Customer')" />
@@ -60,30 +60,30 @@ new #[Layout('layouts.app')] class extends Component
         </div>
 
         {{-- Jobs list --}}
-        <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <div class="card overflow-hidden">
+            <table class="table">
+                <thead>
+                    <tr class="text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                         <th class="px-6 py-3">Job</th>
                         <th class="px-6 py-3">Customer</th>
                         <th class="px-6 py-3">Status</th>
                         <th class="px-6 py-3">Work orders</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody>
                     @forelse ($jobs as $job)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-slate-50">
                             <td class="px-6 py-4">
                                 <a href="{{ route('jobs.show', $job) }}" wire:navigate class="text-indigo-600 hover:underline font-medium">
                                     {{ $job->title ?? 'Untitled job' }}
                                 </a>
                             </td>
-                            <td class="px-6 py-4 text-gray-700">{{ $job->customer?->name }}</td>
-                            <td class="px-6 py-4"><span class="inline-flex px-2 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ $job->status }}</span></td>
-                            <td class="px-6 py-4 text-gray-700">{{ $job->work_orders_count }}</td>
+                            <td class="px-6 py-4 text-slate-700">{{ $job->customer?->name }}</td>
+                            <td class="px-6 py-4"><span class="badge-green">{{ $job->status }}</span></td>
+                            <td class="px-6 py-4 text-slate-700">{{ $job->work_orders_count }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No jobs yet — create one above.</td></tr>
+                        <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">No jobs yet — create one above.</td></tr>
                     @endforelse
                 </tbody>
             </table>

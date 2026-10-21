@@ -77,20 +77,20 @@ new #[Layout('layouts.app')] class extends Component
 
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Scheduling & Dispatch') }}</h2>
+        <h2 class="page-title">{{ __('Scheduling & Dispatch') }}</h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
         {{-- Unscheduled --}}
-        <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
-            <h3 class="font-semibold text-gray-900 px-6 py-4 border-b">Unscheduled work orders</h3>
-            <table class="min-w-full divide-y divide-gray-200">
-                <tbody class="divide-y divide-gray-200">
+        <div class="card overflow-hidden">
+            <h3 class="font-semibold text-slate-900 px-6 py-4 border-b">Unscheduled work orders</h3>
+            <table class="table">
+                <tbody>
                     @forelse ($unscheduled as $wo)
                         <tr class="align-top">
                             <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900">{{ $wo->number ?? 'WO' }}</div>
-                                <div class="text-sm text-gray-500">{{ $wo->job?->customer?->name }} — {{ $wo->job?->title }}</div>
+                                <div class="font-medium text-slate-900">{{ $wo->number ?? 'WO' }}</div>
+                                <div class="text-sm text-slate-500">{{ $wo->job?->customer?->name }} — {{ $wo->job?->title }}</div>
                             </td>
                             <td class="px-6 py-4 w-2/3">
                                 @if ($scheduling_id === $wo->id)
@@ -120,7 +120,7 @@ new #[Layout('layouts.app')] class extends Component
                                         </div>
                                         <div class="flex gap-2">
                                             <x-primary-button>{{ __('Save') }}</x-primary-button>
-                                            <button type="button" wire:click="$set('scheduling_id', null)" class="text-sm text-gray-500">Cancel</button>
+                                            <button type="button" wire:click="$set('scheduling_id', null)" class="text-sm text-slate-500">Cancel</button>
                                         </div>
                                     </form>
                                 @else
@@ -129,36 +129,36 @@ new #[Layout('layouts.app')] class extends Component
                             </td>
                         </tr>
                     @empty
-                        <tr><td class="px-6 py-8 text-center text-gray-500">Nothing waiting to be scheduled.</td></tr>
+                        <tr><td class="px-6 py-8 text-center text-slate-500">Nothing waiting to be scheduled.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
         {{-- Scheduled --}}
-        <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
-            <h3 class="font-semibold text-gray-900 px-6 py-4 border-b">Scheduled</h3>
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <div class="card overflow-hidden">
+            <h3 class="font-semibold text-slate-900 px-6 py-4 border-b">Scheduled</h3>
+            <table class="table">
+                <thead>
                     <tr><th class="px-6 py-3">WO</th><th class="px-6 py-3">Date</th><th class="px-6 py-3">Window</th><th class="px-6 py-3">Assignee</th><th class="px-6 py-3"></th></tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody>
                     @forelse ($scheduled as $wo)
                         <tr>
                             <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900">{{ $wo->number ?? 'WO' }}</div>
-                                <div class="text-sm text-gray-500">{{ $wo->job?->customer?->name }}</div>
+                                <div class="font-medium text-slate-900">{{ $wo->number ?? 'WO' }}</div>
+                                <div class="text-sm text-slate-500">{{ $wo->job?->customer?->name }}</div>
                             </td>
-                            <td class="px-6 py-4 text-gray-700">{{ $wo->scheduled_date?->toFormattedDateString() }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ str_replace('_', ' ', $wo->schedule_window) }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $wo->assignee?->name ?? 'Unassigned' }}</td>
+                            <td class="px-6 py-4 text-slate-700">{{ $wo->scheduled_date?->toFormattedDateString() }}</td>
+                            <td class="px-6 py-4 text-slate-700">{{ str_replace('_', ' ', $wo->schedule_window) }}</td>
+                            <td class="px-6 py-4 text-slate-700">{{ $wo->assignee?->name ?? 'Unassigned' }}</td>
                             <td class="px-6 py-4">
                                 @if ($reschedule_id === $wo->id)
                                     <form wire:submit="reschedule({{ $wo->id }})" class="flex flex-wrap gap-2 items-end">
                                         <x-text-input type="date" wire:model="new_date" class="w-40" />
                                         <x-text-input wire:model="reason" placeholder="Reason" class="w-48" />
                                         <x-primary-button>{{ __('Save') }}</x-primary-button>
-                                        <button type="button" wire:click="$set('reschedule_id', null)" class="text-sm text-gray-500">Cancel</button>
+                                        <button type="button" wire:click="$set('reschedule_id', null)" class="text-sm text-slate-500">Cancel</button>
                                         <x-input-error :messages="$errors->get('new_date')" class="w-full mt-1" />
                                     </form>
                                 @else
@@ -167,7 +167,7 @@ new #[Layout('layouts.app')] class extends Component
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Nothing scheduled yet.</td></tr>
+                        <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">Nothing scheduled yet.</td></tr>
                     @endforelse
                 </tbody>
             </table>

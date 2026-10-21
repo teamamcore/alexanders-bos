@@ -49,17 +49,17 @@ new #[Layout('layouts.app')] class extends Component
 <div>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $job->title ?? 'Job' }} <span class="text-gray-400">· {{ $job->customer?->name }}</span>
+            <h2 class="page-title">
+                {{ $job->title ?? 'Job' }} <span class="text-slate-400">· {{ $job->customer?->name }}</span>
             </h2>
-            <a href="{{ route('jobs.index') }}" wire:navigate class="text-sm text-indigo-600 hover:underline">&larr; All jobs</a>
+            <a href="{{ route('jobs.index') }}" wire:navigate class="text-sm font-medium text-brand-700 hover:text-brand-900 hover:underline">&larr; All jobs</a>
         </div>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         {{-- Add work order --}}
-        <div class="bg-white shadow-sm sm:rounded-lg p-6">
-            <h3 class="font-semibold text-gray-900 mb-4">Add work order</h3>
+        <div class="card p-6">
+            <h3 class="font-semibold text-slate-900 mb-4">Add work order</h3>
             <form wire:submit="addWorkOrder" class="grid gap-4 sm:grid-cols-4 sm:items-end">
                 <div>
                     <x-input-label for="wo_number" :value="__('WO number')" />
@@ -84,10 +84,10 @@ new #[Layout('layouts.app')] class extends Component
         </div>
 
         {{-- Work orders --}}
-        <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <div class="card overflow-hidden">
+            <table class="table">
+                <thead>
+                    <tr class="text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                         <th class="px-6 py-3">WO #</th>
                         <th class="px-6 py-3">Status</th>
                         <th class="px-6 py-3">Window</th>
@@ -95,17 +95,17 @@ new #[Layout('layouts.app')] class extends Component
                         <th class="px-6 py-3">Notes</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody>
                     @forelse ($workOrders as $wo)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 font-medium text-gray-900">{{ $wo->number ?? '—' }}</td>
-                            <td class="px-6 py-4"><span class="inline-flex px-2 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ $wo->status->label() }}</span></td>
-                            <td class="px-6 py-4 text-gray-700">{{ str_replace('_', ' ', $wo->schedule_window) }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $wo->assignee?->name ?? 'Unassigned' }}</td>
-                            <td class="px-6 py-4 text-gray-500">{{ \Illuminate\Support\Str::limit($wo->customer_notes, 50) }}</td>
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">{{ $wo->number ?? '—' }}</td>
+                            <td class="px-6 py-4"><span class="badge-blue">{{ $wo->status->label() }}</span></td>
+                            <td class="px-6 py-4 text-slate-700">{{ str_replace('_', ' ', $wo->schedule_window) }}</td>
+                            <td class="px-6 py-4 text-slate-700">{{ $wo->assignee?->name ?? 'Unassigned' }}</td>
+                            <td class="px-6 py-4 text-slate-500">{{ \Illuminate\Support\Str::limit($wo->customer_notes, 50) }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No work orders yet — add one above.</td></tr>
+                        <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No work orders yet — add one above.</td></tr>
                     @endforelse
                 </tbody>
             </table>
