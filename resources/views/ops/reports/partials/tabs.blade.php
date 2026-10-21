@@ -1,0 +1,6 @@
+<div class="flex gap-1 text-sm">
+    @foreach (['reports.index' => 'Dashboard', 'reports.ar' => 'A/R', 'reports.work-orders' => 'Job costing'] as $route => $label)
+        <a href="{{ route($route) }}"
+           class="px-3 py-1.5 rounded-md {{ request()->routeIs($route) ? 'bg-brand-900 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}">{{ $label }}</a>
+    @endforeach
+</div>

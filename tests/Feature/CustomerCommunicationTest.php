@@ -164,14 +164,14 @@ it('stores call transcripts with the consent notice and shows them to the office
 it('captures phone and email at intake so updates can go out', function () {
     $this->actingAs($this->admin);
     Volt::test('pages.jobs.index')
-        ->set('customer_name', 'Riverside Dental')
+        ->set('customer_name', 'Harbor Point Marina')
         ->set('customer_phone', '555-201-3344')
-        ->set('customer_email', 'office@riverside.example')
+        ->set('customer_email', 'dock@harborpoint.example')
         ->set('job_title', 'Clogged sterilizer drain')
         ->call('createJob')->assertHasNoErrors();
 
-    $c = Customer::where('name', 'Riverside Dental')->firstOrFail();
-    expect($c->phone)->toBe('555-201-3344')->and($c->email)->toBe('office@riverside.example');
+    $c = Customer::where('name', 'Harbor Point Marina')->firstOrFail();
+    expect($c->phone)->toBe('555-201-3344')->and($c->email)->toBe('dock@harborpoint.example');
     expect(SendCustomerMessage::recipient($c)['channel'])->toBe('sms');
     $c->update(['sms_opt_in' => false]);
     expect(SendCustomerMessage::recipient($c->fresh())['channel'])->toBe('email');

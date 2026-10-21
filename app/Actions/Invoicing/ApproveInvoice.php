@@ -19,7 +19,9 @@ final class ApproveInvoice
             throw new DomainException("Only a draft invoice can be approved; {$invoice->number} is {$invoice->status}.");
         }
 
-        $invoice->update(['status' => 'approved']);
+        // SOW §3.9 — approval issues the invoice; due date follows the customer's terms.
+        $days = (int) (config('batsons.payment_terms')[$invoice->terms ?: 'net_30'] ?? 30);
+        $invoice->update(['status' => 'approved', 'issued_at' => today(), 'due_at' => today()->addDays($days)]);
 
         return $invoice->refresh();
     }

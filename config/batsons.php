@@ -113,6 +113,12 @@ return [
         'service' => 'Recurring service name (reminders)', 'due_date' => 'Service due date (reminders)',
     ],
 
+    // SOW §3.9 — reporting & job costing.
+    'payment_terms' => ['due_on_receipt' => 0, 'net_15' => 15, 'net_30' => 30],
+    'collection_flag_days' => 30,      // past due beyond this → collection flag
+    'labor_burden_pct' => 0.25,        // payroll taxes, insurance, benefits on top of wages
+    'default_hourly_rate' => 32.00,    // used when an employee has no rate on file
+
     // SOW §3.7 — parts, equipment, fleet.
     'stock_adjustment_reasons' => [
         'used_on_job' => 'Used on job',

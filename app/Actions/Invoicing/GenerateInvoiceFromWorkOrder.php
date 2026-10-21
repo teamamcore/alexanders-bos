@@ -20,9 +20,13 @@ final class GenerateInvoiceFromWorkOrder
 
     public function handle(WorkOrder $workOrder, float $total = 0.0): Invoice
     {
+        $customer = $workOrder->job?->customer;
+
         return Invoice::create([
             'tenant_id' => $workOrder->tenant_id,
             'work_order_id' => $workOrder->id,
+            'customer_id' => $customer?->id,
+            'terms' => $customer->payment_terms ?? 'net_30', // SOW §3.9 A/R by payment terms
             'number' => 'INV-'.$this->suffix($workOrder),
             'status' => 'draft',
             'total' => $total,

@@ -29,6 +29,8 @@ final class AddProgressPayment
             'work_order_id' => $workOrder->id,
             'number' => "INV-{$suffix}-P{$seq}",
             'status' => 'draft',
+            'customer_id' => $workOrder->job?->customer_id,
+            'terms' => $workOrder->job->customer->payment_terms ?? 'net_30',
             'total' => $amount,
             'is_progress_payment' => true,
         ]);

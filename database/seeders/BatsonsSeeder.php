@@ -8,12 +8,15 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Equipment;
 use App\Models\Gate;
+use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\Part;
 use App\Models\RecurringService;
 use App\Models\ServiceLocation;
+use App\Models\StockAdjustment;
 use App\Models\Supplier;
 use App\Models\Tenant;
+use App\Models\TimeEntry;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\WorkOrder;
@@ -150,7 +153,7 @@ class BatsonsSeeder extends Seeder
         ]);
         $dana->forceFill(['email_verified_at' => now()])->save();
 
-        $eMarcus = Employee::create(['user_id' => $marcus->id, 'name' => 'Marcus Reyes', 'title' => 'Lead plumber',
+        $eMarcus = Employee::create(['user_id' => $marcus->id, 'name' => 'Marcus Reyes', 'title' => 'Lead plumber', 'hourly_rate' => 42.00,
             'hired_at' => '2019-03-04', 'background_check_status' => 'cleared', 'background_check_date' => '2025-01-15']);
         $eMarcus->milestones()->create(['title' => 'Hired', 'occurred_at' => '2019-03-04']);
         $eMarcus->milestones()->create(['title' => 'Promoted to lead', 'occurred_at' => '2023-06-01']);
@@ -162,7 +165,7 @@ class BatsonsSeeder extends Seeder
             $eMarcus->qualifications()->create(['work_type' => $wt, 'value' => $lvl]);
         }
 
-        $eDana = Employee::create(['user_id' => $dana->id, 'name' => 'Dana Whitfield', 'title' => 'Service technician',
+        $eDana = Employee::create(['user_id' => $dana->id, 'name' => 'Dana Whitfield', 'title' => 'Service technician', 'hourly_rate' => 34.00,
             'hired_at' => '2022-08-15', 'background_check_status' => 'pending']);
         $eDana->milestones()->create(['title' => 'Hired', 'occurred_at' => '2022-08-15']);
         $eDana->certifications()->create(['name' => 'Journeyman Plumber', 'type' => 'license', 'number' => 'JP-31102',
@@ -209,5 +212,78 @@ class BatsonsSeeder extends Seeder
         $truck->maintenance()->create(['type' => 'maintenance', 'service_item' => 'oil_change', 'cost' => 84.00, 'performed_at' => now()->subMonths(4), 'odometer' => 57900]);
         $truck->maintenance()->create(['type' => 'fuel', 'cost' => 142.30, 'performed_at' => now()->subDays(9), 'odometer' => 61240]);
         $truck->maintenance()->create(['type' => 'repair', 'cost' => 410.00, 'performed_at' => now()->subMonths(2), 'odometer' => 59800, 'notes' => 'Brake pads + rotors (front)']);
+
+        $this->seedHistory($tenant, $customer, $site, $marcus, $dana);
+    }
+
+    /**
+     * SOW §3.9 — six months of completed, invoiced work so A/R aging, job costing,
+     * profitability by type and the trends chart have real shape. Deterministic.
+     */
+    private function seedHistory(Tenant $tenant, Customer $acme, ServiceLocation $acmeSite, User $marcus, User $dana): void
+    {
+        $riverside = Customer::create(['name' => 'Riverside Dental', 'phone' => '(555) 201-3344', 'email' => 'office@riverside-dental.example', 'payment_terms' => 'net_15']);
+        $riversideSite = ServiceLocation::create(['customer_id' => $riverside->id, 'label' => 'Clinic', 'address' => '88 River Rd', 'type' => 'job']);
+        $hoa = Customer::create(['name' => 'Oak Street HOA', 'phone' => '(555) 318-9900', 'payment_terms' => 'due_on_receipt']);
+        $hoaSite = ServiceLocation::create(['customer_id' => $hoa->id, 'label' => 'Clubhouse', 'address' => '410 Oak St', 'type' => 'job']);
+
+        $jetter = Equipment::where('type', 'jetter')->first();
+        $camera = Equipment::where('type', 'video_inspection')->first();
+        $valve = Part::where('sku', 'BV-34')->first();
+        $kit = Part::where('sku', 'WT-009-RK34')->first();
+        $pvc = Part::where('sku', 'PVC-3-10')->first();
+
+        // [months ago, customer, site, type, title, tech, hours(regular), parts [part, qty], equipment [item, qty], invoice total, payment: paid|open|overdue|collections]
+        $history = [
+            [6, $acme, $acmeSite, 'backflow_testing', 'Annual backflow test — RPZ #1', $marcus, 3.0, [[$kit, 1]], [], 685.00, 'paid'],
+            [5, $riverside, $riversideSite, 'sewer', 'Main line stoppage', $dana, 4.5, [], [[$jetter, 2.0]], 1180.00, 'paid'],
+            [5, $hoa, $hoaSite, 'water_heater', 'Replace 50-gal water heater', $marcus, 5.0, [[$valve, 2], [$pvc, 1]], [], 2450.00, 'paid'],
+            [4, $acme, $acmeSite, 'camera_inspection', 'Camera inspect building C lateral', $dana, 2.0, [], [[$camera, 120.0]], 540.00, 'paid'],
+            [3, $riverside, $riversideSite, 'sewer', 'Recurring stoppage — jet + camera', $dana, 6.0, [[$pvc, 2]], [[$jetter, 3.0], [$camera, 80.0]], 1960.00, 'collections'],
+            [3, $hoa, $hoaSite, 'excavation', 'Dig + repair irrigation main', $marcus, 9.0, [[$pvc, 4], [$valve, 3]], [], 4100.00, 'paid'],
+            [2, $acme, $acmeSite, 'water_heater', 'Break-room water heater service', $marcus, 1.5, [], [], 285.00, 'overdue'],
+            [1, $riverside, $riversideSite, 'backflow_testing', 'Backflow test — clinic', $marcus, 2.0, [[$kit, 1]], [], 640.00, 'open'],
+            [1, $hoa, $hoaSite, 'camera_inspection', 'Pool house drain inspection', $dana, 2.5, [], [[$camera, 60.0]], 480.00, 'open'],
+            [0, $acme, $acmeSite, 'sewer', 'Loading dock drain backing up', $dana, 3.0, [], [[$jetter, 1.5]], 890.00, 'open'],
+        ];
+
+        $n = 2000;
+        foreach ($history as [$monthsAgo, $cust, $site, $type, $title, $tech, $hours, $parts, $equip, $total, $payment]) {
+            $n++;
+            $day = now()->subMonths($monthsAgo)->startOfMonth()->addDays(9)->setTime(8, 30); // the 10th, 8:30am
+            $job = Job::create(['customer_id' => $cust->id, 'service_location_id' => $site->id, 'number' => "J-{$n}", 'title' => $title, 'status' => 'closed']);
+            $wo = WorkOrder::create(['job_id' => $job->id, 'number' => "WO-{$n}", 'status' => 'complete', 'work_type' => $type,
+                'customer_notes' => $title, 'assigned_to' => $tech->id, 'scheduled_date' => $day->toDateString(), 'schedule_window' => 'morning']);
+            WorkOrder::withoutGlobalScopes()->whereKey($wo->id)->update(['created_at' => $day, 'updated_at' => $day->copy()->addHours((int) ceil($hours))]);
+
+            $te = TimeEntry::create(['tenant_id' => $tenant->id, 'user_id' => $tech->id, 'work_order_id' => $wo->id, 'job_id' => $job->id,
+                'category' => 'on_site', 'billable' => true, 'started_at' => $day, 'ended_at' => $day->copy()->addMinutes((int) round($hours * 60))]);
+            TimeEntry::withoutGlobalScopes()->whereKey($te->id)->update(['created_at' => $day, 'updated_at' => $day]);
+
+            foreach ($parts as [$part, $qty]) {
+                if ($part) {
+                    $adj = $part->stockAdjustments()->create(['quantity' => -$qty, 'reason' => 'used_on_job', 'work_order_id' => $wo->id, 'created_by' => $tech->id]);
+                    StockAdjustment::withoutGlobalScopes()->whereKey($adj->id)->update(['created_at' => $day, 'updated_at' => $day]);
+                }
+            }
+            foreach ($equip as [$item, $qty]) {
+                if ($item) {
+                    $item->usages()->create(['work_order_id' => $wo->id, 'quantity' => $qty, 'unit' => $item->billing_unit, 'rate' => $item->billing_rate,
+                        'amount' => round($qty * (float) $item->billing_rate, 2), 'used_on' => $day->toDateString(), 'logged_by' => $tech->id]);
+                }
+            }
+
+            $terms = $cust->payment_terms ?? 'net_30'; // DB default isn't loaded on a fresh model
+            $termsDays = (int) (config('batsons.payment_terms')[$terms] ?? 30);
+            $issued = $day->copy()->addDay()->startOfDay();
+            $inv = Invoice::create(['work_order_id' => $wo->id, 'customer_id' => $cust->id, 'number' => "INV-{$n}", 'total' => $total,
+                'terms' => $terms, 'is_progress_payment' => false,
+                'status' => $payment === 'paid' ? 'paid' : 'approved',
+                'issued_at' => $issued, 'due_at' => $issued->copy()->addDays($termsDays),
+                'paid_at' => $payment === 'paid' ? $issued->copy()->addDays(max(1, $termsDays - 4)) : null,
+                'qb_synced_at' => $issued->copy()->addHours(2),
+            ]);
+            Invoice::withoutGlobalScopes()->whereKey($inv->id)->update(['created_at' => $issued, 'updated_at' => $issued]);
+        }
     }
 }

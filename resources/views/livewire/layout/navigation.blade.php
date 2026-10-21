@@ -31,6 +31,7 @@ new class extends Component
     ];
     if (! auth()->user()->isField()) {
         $links[] = ['route' => 'reminders.index', 'is' => 'reminders.*', 'label' => __('Reminders'), 'navigate' => false];
+        $links[] = ['route' => 'reports.index', 'is' => 'reports.*', 'label' => __('Reports'), 'navigate' => false];
     }
     $links = [...$links,
         ['route' => 'build.index',      'is' => 'build.*',     'label' => __('Build'),            'navigate' => false],

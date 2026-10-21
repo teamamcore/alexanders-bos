@@ -19,7 +19,7 @@ final class MarkInvoicePaid
             throw new DomainException("A voided invoice ({$invoice->number}) cannot be marked paid.");
         }
 
-        $invoice->update(['status' => 'paid']);
+        $invoice->update(['status' => 'paid', 'paid_at' => today()]);
 
         return $invoice->refresh();
     }

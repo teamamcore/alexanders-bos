@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OpsController;
 use App\Http\Controllers\PartsController;
 use App\Http\Controllers\RemindersController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
@@ -121,6 +122,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('{reminder}/contact', [RemindersController::class, 'contact'])->name('contact');
         Route::post('{reminder}/schedule', [RemindersController::class, 'schedule'])->name('schedule');
         Route::post('{reminder}/skip', [RemindersController::class, 'skip'])->name('skip');
+    });
+
+    // Module 3.9 — Reporting & Job Costing (office + administrators)
+    Route::middleware('role:office,administrator')->prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportsController::class, 'index'])->name('index');
+        Route::get('ar', [ReportsController::class, 'ar'])->name('ar');
+        Route::get('work-orders', [ReportsController::class, 'workOrders'])->name('work-orders');
+        Route::get('jobs/{job}', [ReportsController::class, 'job'])->name('job');
     });
 
     // Build checklist (mirrors the Notion Build Timeline)

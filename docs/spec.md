@@ -105,6 +105,15 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   `auto_message`. `/reminders` works the queue (text / email / call / schedule job /
   skip); `/admin/reminder-types` edits `ReminderTypes` (config defaults + tenant
   overrides: interval, 45–60 d style window, auto-message, triggering work type).
+- **3.9 Reporting & Job Costing** — `Platform/Reporting/JobCosting` (labor =
+  hours × pay-rule multiplier × `employees.hourly_rate` × (1 + `labor_burden_pct`);
+  materials = `used_on_job` adjustments at part cost; equipment = usage amount;
+  revenue = approved/sent/paid invoices) and `Reports` (A/R aging buckets + terms +
+  collection flags from `invoices.issued_at/due_at/terms`, profitability by
+  `work_type`, monthly trends, equipment/fleet economics). `/reports` dashboard
+  (inline SVG, validated 2-series palette), `/reports/ar`, drill-down
+  `/reports/work-orders?month|type|customer|from|to`, cost sheet `/reports/jobs/{job}`.
+  `ApproveInvoice` stamps issued/due dates; `MarkInvoicePaid` stamps paid_at.
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

@@ -125,6 +125,8 @@ it('creates a one-off item from a receipt tied to a job', function () {
 
 it('bills equipment on a work order, accrues hours, and flags maintenance due by hours', function () {
     $jetter = Equipment::where('type', 'jetter')->firstOrFail();
+    $jetter->usages()->delete();
+    $jetter->maintenance()->delete();
     $jetter->forceFill(['billing_rate' => 150, 'billing_unit' => 'hour', 'hours_used' => 0, 'maintenance_schedule' => ['every_hours' => 10]])->save();
 
     LogEquipmentUsage::run($jetter, $this->wo, 4, $this->field);

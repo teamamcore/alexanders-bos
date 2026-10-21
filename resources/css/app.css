@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    /* Chart palette — validated with the dataviz palette checker (light surface). */
+    --chart-1: #3a72c4;   /* revenue / primary series */
+    --chart-2: #df611f;   /* cost / secondary series */
+    --chart-3: #0f8f80;   /* collected (line) — teal; validated with chart-1 + chart-2 */
+    --chart-grid: #e2e8f0;
+    --status-warning: #d97706;
+    --status-serious: #dc2626;
+}
+
 @layer base {
     html { @apply antialiased; }
     body { @apply bg-slate-50 text-slate-800; }

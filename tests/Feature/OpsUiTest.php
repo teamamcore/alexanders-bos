@@ -32,7 +32,7 @@ it('generates an invoice from a work order through the UI', function () {
     $this->post(route('invoices.generate', $wo), ['total' => 999.50])
         ->assertRedirect();
 
-    $inv = Invoice::withoutGlobalScopes()->firstOrFail();
+    $inv = Invoice::withoutGlobalScopes()->where('work_order_id', $wo->id)->firstOrFail();
     expect($inv->number)->toStartWith('INV-')
         ->and((float) $inv->total)->toBe(999.50);
 
