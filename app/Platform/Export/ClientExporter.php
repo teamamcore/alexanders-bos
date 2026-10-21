@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace App\Platform\Export;
 
+use App\Models\AssetIssue;
 use App\Models\AuditLog;
 use App\Models\Certification;
 use App\Models\Contact;
 use App\Models\Crew;
 use App\Models\Customer;
+use App\Models\DeliveryCheck;
 use App\Models\Employee;
 use App\Models\EmployeeMilestone;
 use App\Models\Equipment;
 use App\Models\EquipmentMaintenance;
+use App\Models\EquipmentUsage;
 use App\Models\Gate;
 use App\Models\GateOverride;
 use App\Models\Invoice;
 use App\Models\Job;
+use App\Models\MileageReading;
 use App\Models\Part;
 use App\Models\Proposal;
 use App\Models\Qualification;
@@ -82,6 +86,10 @@ class ClientExporter
         Qualification::class,
         Reminder::class,
         VendorPortalIntegration::class,
+        DeliveryCheck::class,
+        EquipmentUsage::class,
+        MileageReading::class,
+        AssetIssue::class,
         AuditLog::class,
     ];
 

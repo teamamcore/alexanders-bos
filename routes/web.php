@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuildController;
+use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\FleetController;
 use App\Http\Controllers\OpsController;
+use App\Http\Controllers\PartsController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -46,6 +49,43 @@ Route::middleware(['auth'])->group(function () {
     Route::post('team/{employee}/certifications', [TeamController::class, 'storeCertification'])->middleware('role:office,administrator')->name('team.certifications.store');
     Route::post('team/{employee}/milestones', [TeamController::class, 'storeMilestone'])->middleware('role:office,administrator')->name('team.milestones.store');
     Route::post('team/{employee}/background-check', [TeamController::class, 'updateBackgroundCheck'])->middleware('role:administrator')->name('team.background');
+
+    // Module 3.7 — Parts & Inventory
+    Route::get('parts', [PartsController::class, 'index'])->name('parts.index');
+    Route::get('parts/{part}', [PartsController::class, 'show'])->name('parts.show');
+    Route::post('parts/{part}/adjust', [PartsController::class, 'adjust'])->name('parts.adjust');       // field ok (used on job, breakage)
+    Route::post('parts/{part}/delivery', [PartsController::class, 'delivery'])->name('parts.delivery'); // field ok (receiving)
+    Route::middleware('role:office,administrator')->group(function () {
+        Route::post('parts', [PartsController::class, 'store'])->name('parts.store');
+        Route::post('parts/import', [PartsController::class, 'import'])->name('parts.import');
+        Route::post('parts/{part}/price', [PartsController::class, 'updatePrice'])->name('parts.price');
+    });
+
+    // Module 3.7 — Billable Equipment
+    Route::get('equipment', [EquipmentController::class, 'index'])->name('equipment.index');
+    Route::get('equipment/{equipment}', [EquipmentController::class, 'show'])->name('equipment.show');
+    Route::post('equipment/{equipment}/usage', [EquipmentController::class, 'usage'])->name('equipment.usage');
+    Route::post('equipment/{equipment}/checkout', [EquipmentController::class, 'checkout'])->name('equipment.checkout');
+    Route::post('equipment/{equipment}/return', [EquipmentController::class, 'return'])->name('equipment.return');
+    Route::post('equipment/{equipment}/issue', [EquipmentController::class, 'issue'])->name('equipment.issue');
+    Route::post('equipment-issues/{issue}/resolve', [EquipmentController::class, 'resolveIssue'])->name('equipment.issues.resolve');
+    Route::middleware('role:office,administrator')->group(function () {
+        Route::post('equipment', [EquipmentController::class, 'store'])->name('equipment.store');
+        Route::post('equipment/{equipment}', [EquipmentController::class, 'update'])->name('equipment.update');
+        Route::post('equipment/{equipment}/maintenance', [EquipmentController::class, 'maintenance'])->name('equipment.maintenance');
+    });
+
+    // Module 3.7 — Fleet
+    Route::get('fleet', [FleetController::class, 'index'])->name('fleet.index');
+    Route::get('fleet/{vehicle}', [FleetController::class, 'show'])->name('fleet.show');
+    Route::post('fleet/{vehicle}/mileage', [FleetController::class, 'mileage'])->name('fleet.mileage');
+    Route::post('fleet/{vehicle}/cost', [FleetController::class, 'cost'])->name('fleet.cost');
+    Route::post('fleet/{vehicle}/issue', [FleetController::class, 'issue'])->name('fleet.issue');
+    Route::post('fleet-issues/{issue}/resolve', [FleetController::class, 'resolveIssue'])->name('fleet.issues.resolve');
+    Route::middleware('role:office,administrator')->group(function () {
+        Route::post('fleet', [FleetController::class, 'store'])->name('fleet.store');
+        Route::post('fleet/{vehicle}', [FleetController::class, 'update'])->name('fleet.update');
+    });
 
     // Build checklist (mirrors the Notion Build Timeline)
     Route::get('progress', [BuildController::class, 'index'])->name('build.index');

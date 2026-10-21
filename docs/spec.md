@@ -70,6 +70,16 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   **qualification matrix** (`/admin/qualifications`, `SetQualification`, audited).
   `App\Support\SchedulingIndicators` feeds level + cert health into the dispatch
   board per work order `work_type` (SOW §3.3). Field users see only their own profile.
+- **3.7 Parts, Inventory, Equipment & Fleet** — `/parts`, `/equipment`, `/fleet`
+  (`PartsController`, `EquipmentController`, `FleetController`; Actions under
+  `Inventory/`, `Equipment/`, `Fleet/`, `Assets/`). Parts: nickname/SKU search,
+  manual price (audited = item history), CSV supplier price import, one-off items,
+  stock adjustments with reasons, delivery checks with shortage/damage/photo,
+  low-stock alerts. Equipment: usage billed per work order (`equipment_usages`),
+  maintenance by hours/days, check-out/return, issue reports, revenue vs. cost,
+  straight-line depreciation (`App\Support\Depreciation`). Fleet: register,
+  mileage readings + stale reminder, service intervals by miles/months, renewal
+  alerts, costs by type, TCO. Photos go to the `public` disk.
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

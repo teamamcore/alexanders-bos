@@ -25,6 +25,7 @@ new class extends Component
         ['route' => 'invoices.index',   'is' => 'invoices.*',  'label' => term('invoice', true),  'navigate' => false],
         ['route' => 'time.index',       'is' => 'time.*',      'label' => __('Time & Pay'),       'navigate' => false],
         ['route' => 'team.index',       'is' => 'team.*',      'label' => __('Team'),             'navigate' => false],
+        ['route' => 'parts.index',      'is' => ['parts.*', 'equipment.*', 'fleet.*'], 'label' => __('Assets'), 'navigate' => false],
         ['route' => 'build.index',      'is' => 'build.*',     'label' => __('Build'),            'navigate' => false],
     ];
     if (auth()->user()->isAdministrator()) {

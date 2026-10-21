@@ -81,6 +81,27 @@ return [
     // Background check: status + date only (MSA Ex. B.2 / B.5(g)).
     'background_check_statuses' => ['not_started', 'pending', 'cleared', 'flagged', 'expired'],
 
+    // SOW §3.7 — parts, equipment, fleet.
+    'stock_adjustment_reasons' => [
+        'used_on_job' => 'Used on job',
+        'not_used' => 'Not used (returned to stock)',
+        'billable_not_used' => 'Billable, not used',
+        'breakage' => 'Breakage',
+        'received' => 'Received (delivery)',
+        'count_correction' => 'Count correction',
+    ],
+    'equipment_billing_units' => ['hour' => 'hour', 'day' => 'day', 'foot' => 'foot'],
+    'equipment_cost_types' => ['maintenance', 'repair', 'parts', 'rental'],
+    'vehicle_cost_types' => ['maintenance', 'repair', 'fuel'],
+    'vehicle_service_items' => [
+        'oil_change' => 'Oil change',
+        'tires' => 'Tires / rotation',
+        'brakes' => 'Brakes',
+        'inspection' => 'State inspection',
+    ],
+    'renewal_alert_days' => 30,        // registration / inspection / insurance
+    'fleet_mileage_stale_days' => 30,  // monthly mileage input reminder
+
     // SOW §3.3 — scheduling windows.
     'schedule_windows' => ['morning', 'afternoon', 'all_day', 'emergency', 'timed'],
 

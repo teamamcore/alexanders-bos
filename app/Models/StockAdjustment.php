@@ -16,4 +16,9 @@ class StockAdjustment extends Model
     {
         return $this->belongsTo(Part::class);
     }
+
+    public function workOrder(): BelongsTo
+    {
+        return $this->belongsTo(WorkOrder::class);
+    }
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 |--------------------------------------------------------------------------
 */
 return [
-    'as_of' => '2026-10-22',
+    'as_of' => '2026-10-21',
     'day_one' => '2026-10-20', // tentative Day 1 (shift all dates to the real kickoff)
 
     'phases' => [
@@ -47,8 +47,9 @@ return [
         ['ref' => 'SOW §3.6', 'phase' => 'Build', 'name' => '3.6 Invoicing & Client Portals', 'status' => 'done',
             'target' => ['2026-10-29', '2026-11-01'], 'notes' => 'Invoice per WO; progress payments; QuickBooks sync (status only).',
             'link' => ['route' => 'invoices.index', 'label' => 'Open Invoicing']],
-        ['ref' => 'SOW §3.7', 'phase' => 'Build', 'name' => '3.7 Parts, Inventory, Equipment & Fleet', 'status' => 'not_started',
-            'target' => ['2026-10-24', '2026-10-28'], 'notes' => '3 workstreams: parts, equipment, fleet.'],
+        ['ref' => 'SOW §3.7', 'phase' => 'Build', 'name' => '3.7 Parts, Inventory, Equipment & Fleet', 'status' => 'done',
+            'target' => ['2026-10-24', '2026-10-28'], 'notes' => 'Catalog + nickname search, price import, delivery checks, stock reasons; equipment billing/maintenance/check-out/depreciation; fleet mileage, service, renewals, TCO.',
+            'link' => ['route' => 'parts.index', 'label' => 'Open Assets']],
         ['ref' => 'SOW §3.8', 'phase' => 'Build', 'name' => '3.8 Time & Pay', 'status' => 'done',
             'target' => ['2026-10-27', '2026-10-30'], 'notes' => 'Clock in/out, pay rules, QB payroll summary.',
             'link' => ['route' => 'time.index', 'label' => 'Open Time & Pay']],

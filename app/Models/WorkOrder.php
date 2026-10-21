@@ -67,4 +67,15 @@ class WorkOrder extends Model
     {
         return $this->hasMany(TimeEntry::class);
     }
+
+    // SOW §3.7 — equipment billed on this work order (revenue tracked per item).
+    public function equipmentUsages(): HasMany
+    {
+        return $this->hasMany(EquipmentUsage::class);
+    }
+
+    public function billableEquipmentTotal(): float
+    {
+        return (float) $this->equipmentUsages()->sum('amount');
+    }
 }
