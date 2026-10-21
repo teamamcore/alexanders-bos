@@ -22,14 +22,14 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white shadow-sm rounded-lg">
                     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <span class="font-semibold text-gray-800">Recent Jobs</span>
-                        <a href="{{ route('jobs.index') }}" class="text-sm text-indigo-600">All jobs →</a>
+                        <span class="font-semibold text-gray-800">Recent {{ term('job', true) }}</span>
+                        <a href="{{ route('jobs.index') }}" class="text-sm text-indigo-600">All {{ strtolower(term('job', true)) }} →</a>
                     </div>
                     <div class="divide-y divide-gray-100">
                         @forelse ($jobs as $job)
                             <a href="{{ route('jobs.show', $job) }}" class="block px-6 py-3 hover:bg-gray-50">
                                 <div class="font-medium text-gray-900">{{ $job->number }} — {{ $job->title }}</div>
-                                <div class="text-sm text-gray-500">{{ $job->customer?->name }} · {{ $job->workOrders->count() }} WO</div>
+                                <div class="text-sm text-gray-500">{{ $job->customer?->name }} · {{ $job->workOrders->count() }} {{ abbr('work_order') }}</div>
                             </a>
                         @empty
                             <div class="px-6 py-4 text-gray-500">No jobs yet.</div>
@@ -39,8 +39,8 @@
 
                 <div class="bg-white shadow-sm rounded-lg">
                     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <span class="font-semibold text-gray-800">Recent Invoices</span>
-                        <a href="{{ route('invoices.index') }}" class="text-sm text-indigo-600">All invoices →</a>
+                        <span class="font-semibold text-gray-800">Recent {{ term('invoice', true) }}</span>
+                        <a href="{{ route('invoices.index') }}" class="text-sm text-indigo-600">All {{ strtolower(term('invoice', true)) }} →</a>
                     </div>
                     <div class="divide-y divide-gray-100">
                         @forelse ($invoices as $inv)
@@ -52,7 +52,7 @@
                                 <span class="text-xs rounded-full px-2 py-1 bg-gray-100 text-gray-700">{{ $inv->status }}</span>
                             </div>
                         @empty
-                            <div class="px-6 py-4 text-gray-500">No invoices yet — create one on the <a href="{{ route('invoices.index') }}" class="text-indigo-600">Invoices</a> page.</div>
+                            <div class="px-6 py-4 text-gray-500">No {{ strtolower(term('invoice', true)) }} yet — create one on the <a href="{{ route('invoices.index') }}" class="text-indigo-600">{{ term('invoice', true) }}</a> page.</div>
                         @endforelse
                     </div>
                 </div>

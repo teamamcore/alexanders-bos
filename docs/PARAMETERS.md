@@ -20,12 +20,21 @@ and Exhibit B (Data Handling Policy). These shape the architecture beyond the
 ## 2. Roles & Access
 - Three tiers: **field / office / administrator** (SOW §3.13, Ex. B.5b).
   _Implemented:_ `App\Enums\Role`, `users.role`.
-- **Field users see only their assigned work** (SOW §3.3). _TODO:_ query scope on
-  work orders / schedule for `role = field`.
+- **Field users see only their assigned work** (SOW §3.3). _Implemented:_
+  `BelongsToTenant` field scope via `currentUser`.
 - **Passkey + device biometric** sign-in; biometric stays on device (Ex. B.5b, B.2d).
-- **MFA** on administrative systems (Ex. B.5c).
+  _Implemented:_ spatie/laravel-passkeys — login button + Profile management; only
+  the public key is stored.
+- **MFA** on administrative systems (Ex. B.5c) — hosting/provider console; app-level
+  passkeys satisfy phishing-resistant sign-in.
 - User setup/deactivation; deactivate departed users promptly (MSA §5.1).
-- **20 users** included; blocks of **5** (Ex. A; SOW §3.15).
+  _Implemented:_ Administration → Users; deactivation ends sessions + blocks login.
+- **20 users** included; blocks of **5** (Ex. A; SOW §3.15). _Implemented:_
+  `Tenant::seatUsage()` shown on the Users page (informational, never blocks).
+- **Configurable terminology/abbreviations** (SOW §3.13). _Implemented:_
+  Administration → Terminology; `term()` / `abbr()` helpers.
+- **Written security overview** (SOW §3.13). _Implemented:_ `docs/SECURITY.md`,
+  rendered at Administration → Security with live posture + service targets.
 
 ## 3. 🔴 Prohibited Data (hard constraint — MSA Exhibit B.2)
 Never persist any of:

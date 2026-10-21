@@ -34,20 +34,25 @@ new class extends Component
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     <x-nav-link :href="route('proposals.index')" :active="request()->routeIs('proposals.*')">
-                        {{ __('Proposals') }}
+                        {{ term('proposal', true) }}
                     </x-nav-link>
                     <x-nav-link :href="route('jobs.index')" :active="request()->routeIs('jobs.*')" wire:navigate>
-                        {{ __('Jobs') }}
+                        {{ term('job', true) }}
                     </x-nav-link>
                     <x-nav-link :href="route('schedule.index')" :active="request()->routeIs('schedule.*')" wire:navigate>
-                        {{ __('Schedule') }}
+                        {{ term('schedule') }}
                     </x-nav-link>
                     <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
-                        {{ __('Invoices') }}
+                        {{ term('invoice', true) }}
                     </x-nav-link>
                     <x-nav-link :href="route('time.index')" :active="request()->routeIs('time.*')">
                         {{ __('Time &amp; Pay') }}
                     </x-nav-link>
+                    @if (auth()->user()->isAdministrator())
+                        <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.*')">
+                            {{ __('Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -99,6 +104,14 @@ new class extends Component
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('proposals.index')" :active="request()->routeIs('proposals.*')">{{ term('proposal', true) }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('jobs.index')" :active="request()->routeIs('jobs.*')" wire:navigate>{{ term('job', true) }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('schedule.index')" :active="request()->routeIs('schedule.*')" wire:navigate>{{ term('schedule') }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">{{ term('invoice', true) }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('time.index')" :active="request()->routeIs('time.*')">{{ __('Time &amp; Pay') }}</x-responsive-nav-link>
+            @if (auth()->user()->isAdministrator())
+                <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.*')">{{ __('Admin') }}</x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

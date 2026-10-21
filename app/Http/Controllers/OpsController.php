@@ -34,10 +34,10 @@ class OpsController extends Controller
     {
         return view('ops.dashboard', [
             'counts' => [
-                'Customers' => Customer::count(),
-                'Jobs' => Job::count(),
-                'Work Orders' => WorkOrder::count(),
-                'Invoices' => Invoice::count(),
+                term('customer', true) => Customer::count(),
+                term('job', true) => Job::count(),
+                term('work_order', true) => WorkOrder::count(),
+                term('invoice', true) => Invoice::count(),
             ],
             'jobs' => Job::with(['customer', 'workOrders'])->latest()->take(6)->get(),
             'invoices' => Invoice::with('workOrder')->latest()->take(6)->get(),

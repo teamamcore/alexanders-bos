@@ -42,7 +42,7 @@
 
             {{-- Invoices --}}
             <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 font-semibold text-gray-800">Invoices</div>
+                <div class="px-6 py-4 border-b border-gray-100 font-semibold text-gray-800">{{ term('invoice', true) }}</div>
                 <table class="min-w-full divide-y divide-gray-100 text-sm">
                     <thead class="bg-gray-50 text-left text-xs uppercase text-gray-500">
                         <tr>

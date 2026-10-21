@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Proposals &amp; Estimating <span class="text-sm text-gray-400">(SOW §3.5)</span></h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ term('proposal', true) }} &amp; Estimating <span class="text-sm text-gray-400">(SOW §3.5)</span></h2>
     </x-slot>
 
     <div class="py-10">

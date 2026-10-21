@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
+// SOW §3.13 — passkey / device-biometric sign-in (spatie/laravel-passkeys).
+Route::passkeys();
+
 Route::middleware('guest')->group(function () {
     Volt::route('register', 'pages.auth.register')
         ->name('register');

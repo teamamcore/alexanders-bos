@@ -17,6 +17,30 @@ return [
     // SOW §3.13 / Exhibit B.5 — three access tiers.
     'roles' => ['field', 'office', 'administrator'],
 
+    // SOW §3.13 — configurable terminology + abbreviations. Platform defaults;
+    // per-tenant overrides live in tenants.settings.terminology / .abbreviations
+    // (Client layer) and are read through term() / abbr().
+    'terminology' => [
+        'customer' => 'Customer',
+        'service_location' => 'Service Location',
+        'job' => 'Job',
+        'work_order' => 'Work Order',
+        'proposal' => 'Proposal',
+        'invoice' => 'Invoice',
+        'schedule' => 'Schedule',
+        'crew' => 'Crew',
+    ],
+    'abbreviations' => [
+        'customer' => 'CUST',
+        'service_location' => 'SITE',
+        'job' => 'J',
+        'work_order' => 'WO',
+        'proposal' => 'PR',
+        'invoice' => 'INV',
+        'schedule' => 'SCH',
+        'crew' => 'CRW',
+    ],
+
     // SOW §3.15 / Exhibit A — included seats.
     'included_users' => 20,
     'additional_user_block' => 5,

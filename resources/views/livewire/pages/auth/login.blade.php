@@ -28,6 +28,21 @@ new #[Layout('layouts.guest')] class extends Component
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <!-- SOW §3.13 — passkey / device biometric sign-in -->
+    <div class="mb-6">
+        <x-authenticate-passkey>
+            <button type="button" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4 9 5.567 9 7.5 10.343 11 12 11zm0 0v9m0 0l-2.5-2.5M12 20l2.5-2.5"/></svg>
+                Sign in with a passkey
+            </button>
+        </x-authenticate-passkey>
+        <p class="mt-2 text-center text-xs text-gray-400">Face ID, Touch ID, Windows Hello or a security key. Your biometric never leaves your device.</p>
+        <div class="relative mt-5">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+            <div class="relative flex justify-center text-xs"><span class="bg-white px-2 text-gray-400">or with a password</span></div>
+        </div>
+    </div>
+
     <form wire:submit="login">
         <!-- Email Address -->
         <div>

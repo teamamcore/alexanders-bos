@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OpsController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -36,6 +37,18 @@ Route::middleware(['auth'])->group(function () {
     Route::post('time/{timeEntry}/clock-out', [OpsController::class, 'clockOut'])->name('time.clockout');
 
     Route::view('profile', 'profile')->name('profile');
+
+    // Module 3.13 — Administration & Security (administrators only)
+    Route::prefix('admin')->middleware('role:administrator')->name('admin.')->group(function () {
+        Route::get('users', [AdminController::class, 'users'])->name('users');
+        Route::post('users', [AdminController::class, 'storeUser'])->name('users.store');
+        Route::post('users/{user}/deactivate', [AdminController::class, 'deactivateUser'])->name('users.deactivate');
+        Route::post('users/{user}/reactivate', [AdminController::class, 'reactivateUser'])->name('users.reactivate');
+        Route::post('users/{user}/role', [AdminController::class, 'changeRole'])->name('users.role');
+        Route::get('terminology', [AdminController::class, 'terminology'])->name('terminology');
+        Route::post('terminology', [AdminController::class, 'updateTerminology'])->name('terminology.update');
+        Route::get('security', [AdminController::class, 'security'])->name('security');
+    });
 });
 
 require __DIR__.'/auth.php';

@@ -56,6 +56,14 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
 - **3.8 Time & Pay** — `ClockIn`/`ClockOut`, `AdjustTimeEntry`, `CalculatePay`
   pay-rule engine (business hours, OT multipliers from `tenants.settings.pay_rules`).
 
+- **3.13 Administration & Security** — `AdminController` under `/admin`
+  (`role:administrator`): user setup/deactivation/role changes (`Actions/Admin/*`,
+  seat usage vs. 20 included + blocks of 5), configurable terminology via
+  `term()`/`abbr()` (`app/Support/helpers.php`, overrides in `tenants.settings`),
+  passkey / device-biometric sign-in (spatie/laravel-passkeys; `Route::passkeys()`),
+  and the written security overview (`docs/SECURITY.md`, rendered in-app).
+  Deactivated users are refused at login and dropped by `SetCurrentTenant`.
+
 ## Platform / Client seam
 `php artisan client:export {client}` and `client:fork {source} {name}` — see
 `ARCHITECTURE.md`. Everything client-owned lives in `config/clients/<key>.php`,
