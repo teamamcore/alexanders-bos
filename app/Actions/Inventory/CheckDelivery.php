@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Inventory;
 
+use App\Actions\WorkOrders\ReleaseHold;
 use App\Models\DeliveryCheck;
 use App\Models\Part;
 use App\Models\Supplier;
@@ -53,6 +54,11 @@ final class CheckDelivery
         if ($check->usable() > 0) {
             AdjustStock::run($part, $check->usable(), 'received', $actor, $workOrder,
                 'Delivery '.($reference ?: '#'.$check->id).($damaged > 0 ? " ({$damaged} damaged)" : ''));
+        }
+
+        // Design notes §2 — part-arrival trigger: a WO waiting on parts goes back to ready-to-schedule.
+        if ($workOrder && $workOrder->on_hold && $workOrder->hold_reason === 'waiting_parts' && $check->usable() > 0) {
+            ReleaseHold::run($workOrder, $actor, "parts are here ({$part->name})");
         }
 
         // SOW §3.12 — office hears about shortages / damage on delivery.

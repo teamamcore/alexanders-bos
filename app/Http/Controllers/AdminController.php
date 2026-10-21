@@ -173,6 +173,22 @@ final class AdminController extends Controller
         return back()->with('status', $changed ? "Saved {$changed} qualification change(s)." : 'No changes.');
     }
 
+    // ---- Appearance: icon set (design notes §4) ----------------------------
+
+    public function updateAppearance(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['icon_set' => ['required', Rule::in(array_keys(config('batsons.icon_sets', [])))]]);
+        $tenant = $this->tenant();
+        $settings = $tenant->settings ?? [];
+        $settings['icon_set'] = $data['icon_set'];
+        $tenant->settings = $settings;
+        $tenant->save();
+        app()->instance('currentTenant', $tenant);
+        AuditLog::record('appearance.updated', $tenant, ['icon_set' => $data['icon_set'], 'by' => $this->actor($request)->id]);
+
+        return back()->with('status', 'Icon set: '.config('batsons.icon_sets')[$data['icon_set']].'.');
+    }
+
     // ---- Reminder types (SOW §3.10) ---------------------------------------
 
     public function reminderTypes(): View

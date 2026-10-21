@@ -33,6 +33,7 @@ use App\Models\Qualification;
 use App\Models\RecurringService;
 use App\Models\Reminder;
 use App\Models\ScheduleChange;
+use App\Models\ScopeRevision;
 use App\Models\ServiceLocation;
 use App\Models\StockAdjustment;
 use App\Models\Supplier;
@@ -44,6 +45,8 @@ use App\Models\Vehicle;
 use App\Models\VehicleMaintenance;
 use App\Models\VendorPortalIntegration;
 use App\Models\WorkOrder;
+use App\Models\WorkOrderFile;
+use App\Models\WorkOrderNote;
 use App\Models\WorkOrderUpdate;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -74,6 +77,9 @@ class ClientExporter
         Job::class,
         WorkOrder::class,
         WorkOrderUpdate::class,
+        WorkOrderNote::class,
+        ScopeRevision::class,
+        WorkOrderFile::class,
         Gate::class,
         GateOverride::class,
         Crew::class,

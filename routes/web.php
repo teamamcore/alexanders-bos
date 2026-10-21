@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuildController;
+use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\InboxController;
@@ -29,6 +30,21 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('jobs', 'pages.jobs.index')->name('jobs.index');
     Volt::route('jobs/{job}', 'pages.jobs.show')->name('jobs.show');
     Volt::route('schedule', 'pages.schedule.index')->name('schedule.index');
+
+    // Work Order parent (design notes §1) — office desktop + tech mobile views, completion questionnaire
+    Volt::route('work-orders', 'pages.work-orders.index')->name('work-orders.index');
+    Volt::route('work-orders/{workOrder}', 'pages.work-orders.show')->name('work-orders.show');
+    Volt::route('work-orders/{workOrder}/complete', 'pages.work-orders.complete')->name('work-orders.complete');
+
+    // Contacts module (design notes §3) — office + administrators
+    Route::middleware('role:office,administrator')->prefix('contacts')->name('contacts.')->group(function () {
+        Route::get('/', [ContactsController::class, 'index'])->name('index');
+        Route::get('{customer}', [ContactsController::class, 'show'])->name('show');
+        Route::post('{customer}', [ContactsController::class, 'update'])->name('update');
+        Route::post('{customer}/people', [ContactsController::class, 'storeContact'])->name('people.store');
+        Route::post('{customer}/locations', [ContactsController::class, 'storeLocation'])->name('locations.store');
+        Route::post('locations/{location}/contact', [ContactsController::class, 'setLocationContact'])->name('locations.contact');
+    });
 
     // Module 3.5 — Proposals & Estimating
     Route::get('proposals', [OpsController::class, 'proposals'])->name('proposals.index');
@@ -159,6 +175,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('users/{user}/role', [AdminController::class, 'changeRole'])->name('users.role');
         Route::get('terminology', [AdminController::class, 'terminology'])->name('terminology');
         Route::post('terminology', [AdminController::class, 'updateTerminology'])->name('terminology.update');
+        Route::post('appearance', [AdminController::class, 'updateAppearance'])->name('appearance.update'); // icon set (design notes §4)
         Route::get('security', [AdminController::class, 'security'])->name('security');
         // 3.11 — management assignment area for qualification values
         Route::get('qualifications', [AdminController::class, 'qualifications'])->name('qualifications');

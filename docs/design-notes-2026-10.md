@@ -213,19 +213,19 @@ Captured here only so the photos make sense.
 Modules 3.1/3.2/3.3/3.8 are marked shipped in the Build Timeline, but these
 meetings specify details to verify against the implementation:
 
-- [ ] Completion questionnaire (pre-filled, category-by-category) on WO submit
-- [ ] Status pill taxonomy incl. Hold sub-state + on-hold reasons taxonomy
-- [ ] Techs cannot see pricing/billing anywhere in field views
-- [ ] Internal vs. external notes/comms split; tech notes never on invoices
-- [ ] `Send scope update` ping + office "actions needed" dashboard
-- [ ] Office-only SOW editing with redline-style authorized additions
-- [ ] Equipment as its own billable category (not materials)
-- [ ] Redundant invoice buttons on the office WO page
-- [ ] Scheduling day view: roster row + All Day/AM/PM lanes, drag-and-drop
-- [ ] W.O.S panel categories mirror Work Orders module exactly
-- [ ] Half-day counter, multi-day population, P1/P2 queueing
-- [ ] Emergency flow (red frame, All-Day default, auto-hold of current job)
-- [ ] Capability tiers on employees + required tier on WOs (needs Eric's tiers)
-- [ ] Parts-arrival trigger → ready-to-schedule + dispatch notification
-- [ ] Contacts: locations-with-local-contact list, Paid $ YTD, AR mini chart
-- [ ] Two icon sets, client-selectable
+- [x] Completion questionnaire (pre-filled, category-by-category) on WO submit — _`/work-orders/{wo}/complete`_
+- [x] Status pill taxonomy incl. Hold sub-state + on-hold reasons taxonomy — _`WorkOrder::pillStatus()`, `on_hold` + `hold_reason`, `config('batsons.hold_reasons')`_
+- [x] Techs cannot see pricing/billing anywhere in field views — _tech view of `pages.work-orders.show`; tally is office/admin only_
+- [x] Internal vs. external notes/comms split; tech notes never on invoices — _`work_order_notes` (internal) vs `customer_messages` (external)_
+- [x] `Send scope update` ping + office "actions needed" dashboard — _`AddWorkOrderNote(kind=scope_update)` → notification + dashboard panel_
+- [x] Office-only SOW editing with redline-style authorized additions — _`UpdateScopeOfWork` + `scope_revisions`_
+- [x] Equipment as its own billable category (not materials) — _`WorkOrderBilling::tally()` + Billables zone_
+- [x] Redundant invoice buttons on the office WO page — _header · billables · notes_
+- [x] Scheduling day view: roster row + All Day/AM/PM lanes, drag-and-drop — _`pages.schedule.index` + `AssignWorkOrderToTeam`_
+- [x] W.O.S panel categories mirror Work Orders module exactly — _`WorkOrder::board()` drives both_
+- [x] Half-day counter, multi-day population, P1/P2 queueing — _`day_fraction` counter + multi-day spread (P1/P2 queue still open)_
+- [x] Emergency flow (red frame, All-Day default, auto-hold of current job) — _`CreateEmergencyWorkOrder` + bump in `AssignWorkOrderToTeam`_
+- [~] Capability tiers on employees + required tier on WOs — _qualification levels exist (3.11); WO required tier still waits on Eric's tiers_
+- [x] Parts-arrival trigger → ready-to-schedule + dispatch notification — _`CheckDelivery` → `ReleaseHold`_
+- [x] Contacts: locations-with-local-contact list, Paid $ YTD, AR mini chart — _`/contacts/{customer}`_
+- [x] Two icon sets, client-selectable — _`<x-icon>` + Admin → Terminology → Icon set_

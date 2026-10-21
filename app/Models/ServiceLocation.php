@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $address
  * @property string|null $type
  * @property string|null $access_notes
+ * @property int|null $contact_id
  */
 class ServiceLocation extends Model
 {
@@ -26,5 +27,11 @@ class ServiceLocation extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    /** Local contact at this site (design notes §3). @return BelongsTo<Contact, $this> */
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
     }
 }

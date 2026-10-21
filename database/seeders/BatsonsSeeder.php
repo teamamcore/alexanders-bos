@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\Role;
 use App\Models\Contact;
+use App\Models\Crew;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Equipment;
@@ -100,10 +101,12 @@ class BatsonsSeeder extends Seeder
         // A sample customer → site → job → work order so screens have data.
         $customer = Customer::create(['name' => 'Acme Industrial Park', 'notes' => 'Net 30',
             'phone' => '(555) 214-7788', 'email' => 'facilities@acme-industrial.example']);
-        Contact::create(['customer_id' => $customer->id, 'name' => 'Pat Morales', 'role' => 'Facilities manager',
+        $pat = Contact::create(['customer_id' => $customer->id, 'name' => 'Pat Morales', 'role' => 'Facilities manager',
             'phone' => '(555) 214-7790', 'email' => 'pat.morales@acme-industrial.example']);
+        $customer->update(['segment' => 'industrial', 'corp_poc_contact_id' => $pat->id]);
         $site = ServiceLocation::create([
             'customer_id' => $customer->id,
+            'contact_id' => $pat->id, // local contact at this site (design notes §3)
             'label' => 'Building C',
             'address' => '1200 Industrial Blvd',
             'type' => 'job',
@@ -185,6 +188,13 @@ class BatsonsSeeder extends Seeder
         foreach (['camera_inspection' => 3, 'sewer' => 3, 'backflow_testing' => 1] as $wt => $lvl) {
             $eDana->qualifications()->create(['work_type' => $wt, 'value' => $lvl]);
         }
+
+        // Dispatch roster (design notes §2): teams are built from members; first member = lead.
+        $team1 = Crew::create(['name' => 'Team 1']);
+        $team1->members()->attach([$marcus->id]);
+        $team2 = Crew::create(['name' => 'Team 2']);
+        $team2->members()->attach([$dana->id]);
+        $customer->update(['owner_user_id' => User::where('email', 'eric@batsonsplumbing.com')->value('id')]);
 
         Employee::create(['user_id' => User::where('email', 'eric@batsonsplumbing.com')->value('id'), 'name' => 'Eric White',
             'title' => 'Owner / project lead', 'hired_at' => '2008-01-02', 'background_check_status' => 'cleared', 'background_check_date' => '2024-11-01']);

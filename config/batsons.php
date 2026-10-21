@@ -113,6 +113,20 @@ return [
         'service' => 'Recurring service name (reminders)', 'due_date' => 'Service due date (reminders)',
     ],
 
+    // Design notes (Oct 7–8 meetings) — work-order parent, dispatch board, icons.
+    'hold_reasons' => [
+        'waiting_parts' => 'Waiting for parts',
+        'customer_approval' => 'Waiting on customer approval',
+        'discovery_follow_up' => 'Discovery follow-up',
+        'emergency_bump' => 'Bumped by an emergency',
+        'weather' => 'Weather / site access',
+        'other' => 'Other',
+    ],
+    'lanes' => ['all_day' => 'All day', 'am' => 'AM', 'pm' => 'PM'],
+    'billing' => ['labor_rate' => 125.00, 'ot_labor_rate' => 187.50], // customer-facing labor rates for the running tally
+    'icon_sets' => ['plumbing' => 'Playful plumbing', 'standard' => 'Standard'],
+    'customer_segments' => ['commercial', 'industrial', 'institutional', 'residential', 'property_management', 'national_account'],
+
     // SOW §3.9 — reporting & job costing.
     'payment_terms' => ['due_on_receipt' => 0, 'net_15' => 15, 'net_30' => 30],
     'collection_flag_days' => 30,      // past due beyond this → collection flag

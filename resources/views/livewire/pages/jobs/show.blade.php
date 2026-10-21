@@ -162,7 +162,7 @@ new #[Layout('layouts.app')] class extends Component
                 <tbody>
                     @forelse ($workOrders as $wo)
                         <tr>
-                            <td class="font-medium text-slate-900">{{ $wo->number ?? '—' }}</td>
+                            <td class="font-medium text-slate-900"><a href="{{ route('work-orders.show', $wo) }}" class="text-brand-800 hover:underline">{{ $wo->number ?? 'WO #'.$wo->id }}</a>@if ($wo->on_hold)<span class="pill-hold !ml-1 !py-0.5">hold</span>@endif</td>
                             <td><span class="badge-blue">{{ $wo->status->label() }}</span></td>
                             <td class="text-slate-700">{{ str_replace('_', ' ', $wo->schedule_window) }}@if ($wo->scheduled_date)<div class="text-xs text-slate-400">{{ $wo->scheduled_date->format('D, M j') }}</div>@endif</td>
                             <td class="text-slate-700">{{ $wo->assignee?->name ?? 'Unassigned' }}</td>

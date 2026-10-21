@@ -128,6 +128,27 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.
 
+## Design pass (Oct 7–8 meeting notes → UI)
+Source: `docs/design-notes-2026-10.md` + whiteboards in `docs/design/`. Chrome:
+persistent top bar (back · logo · page name · clock · bell · inbox · user ·
+settings) + collapsible left sidebar (`layouts/partials/sidebar`, `bos_nav()`),
+bottom tab bar on phones, `<x-icon>` with client-selectable sets
+(`components/icons/{plumbing,standard}`, Admin → Terminology → Icon set).
+**Work Order parent** `pages.work-orders.show`: status pill (Inactive → Active →
+Billable → Paid/Closed, Hold sub-state + reasons), invoice tally ($ admin-only),
+Book now, customer block (business · location · primary/secondary), 3-layer
+description/SOW with redline revisions (`UpdateScopeOfWork`), comms (external =
+`customer_messages`, internal = `work_order_notes`), activity, billables
+(hours · materials · equipment), notes (save / **send scope update** / cancel),
+photos; tech view = minimal stack, no pricing, status dropdown, completion
+questionnaire `pages.work-orders.complete`. **Dispatch board**
+`pages.schedule.index`: Day (roster row, All Day/AM/PM × team, drag-and-drop via
+`AssignWorkOrderToTeam`), Week, Month; W.O.S panel mirrors `WorkOrder::board()`;
+Emergency control (`CreateEmergencyWorkOrder`, red frame, bumps the team's day
+to On Hold); parts arrival releases `waiting_parts` holds. **Contacts**
+`/contacts/{customer}`: corp info, locations + local contact, filtered comms,
+AR mini chart, right rail. Dashboard "Actions needed" = scope pings, emergencies, holds.
+
 ## Platform / Client seam
 `php artisan client:export {client}` and `client:fork {source} {name}` — see
 `ARCHITECTURE.md`. Everything client-owned lives in `config/clients/<key>.php`,

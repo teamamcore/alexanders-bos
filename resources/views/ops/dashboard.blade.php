@@ -19,6 +19,21 @@
                 @endforeach
             </div>
 
+            @if ($actions->isNotEmpty())
+                <div class="card overflow-hidden">
+                    <div class="card-head"><span class="card-title">Actions needed <span class="card-note">· scope-update pings, emergencies, holds</span></span><a href="{{ route('work-orders.index') }}" class="text-sm font-medium text-brand-700">All {{ strtolower(term('work_order', true)) }} →</a></div>
+                    <ul class="divide-y divide-slate-100">
+                        @foreach ($actions as $a)
+                            <li><a href="{{ $a['url'] }}" class="flex items-start gap-3 px-6 py-3 hover:bg-slate-50">
+                                <span class="{{ $a['tone'] === 'red' ? 'badge-red' : ($a['tone'] === 'amber' ? 'badge-amber' : 'badge-gray') }} shrink-0 mt-0.5">{{ $a['kind'] }}</span>
+                                <span class="min-w-0 grow"><span class="block text-sm font-medium text-slate-900">{{ $a['title'] }}</span><span class="block text-sm text-slate-600 truncate">{{ $a['body'] }}</span></span>
+                                <span class="shrink-0 text-xs text-slate-400">{{ $a['who'] ? $a['who'].' · ' : '' }}{{ $a['at']?->diffForHumans(null, true) }}</span>
+                            </a></li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="card">
                     <div class="card-head">

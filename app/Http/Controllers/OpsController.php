@@ -22,6 +22,7 @@ use App\Models\Job;
 use App\Models\Proposal;
 use App\Models\TimeEntry;
 use App\Models\WorkOrder;
+use App\Models\WorkOrderNote;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,15 @@ class OpsController extends Controller
             ],
             'jobs' => Job::with(['customer', 'workOrders'])->latest()->take(6)->get(),
             'invoices' => Invoice::with('workOrder')->latest()->take(6)->get(),
+            // Design notes §1 — the office "actions needed" view: scope-update pings, emergencies, holds.
+            'actions' => auth()->user()->isField() ? collect() : collect()
+                ->merge(WorkOrderNote::query()->pendingScopeUpdates()->with(['workOrder.job.customer', 'author'])->latest()->take(10)->get()
+                    ->map(fn ($n) => ['kind' => 'Scope update', 'tone' => 'amber', 'title' => ($n->workOrder->number ?? 'WO').' · '.($n->workOrder->job->customer->name ?? ''), 'body' => $n->body, 'who' => $n->author?->name, 'at' => $n->created_at, 'url' => $n->workOrder ? route('work-orders.show', $n->workOrder) : route('work-orders.index')]))
+                ->merge(WorkOrder::query()->where('priority', 'emergency')->whereNull('scheduled_date')->with('job.customer')->latest()->take(5)->get()
+                    ->map(fn ($wo) => ['kind' => 'Emergency', 'tone' => 'red', 'title' => ($wo->number ?? 'WO').' · '.($wo->job->customer->name ?? ''), 'body' => $wo->customer_notes, 'who' => null, 'at' => $wo->created_at, 'url' => route('schedule.index', ['wo' => $wo->id])]))
+                ->merge(WorkOrder::query()->where('on_hold', true)->with('job.customer')->latest('updated_at')->take(5)->get()
+                    ->map(fn ($wo) => ['kind' => 'On hold', 'tone' => 'slate', 'title' => ($wo->number ?? 'WO').' · '.($wo->job->customer->name ?? ''), 'body' => $wo->holdReasonLabel(), 'who' => null, 'at' => $wo->updated_at, 'url' => route('work-orders.show', $wo)]))
+                ->sortByDesc('at')->values(),
         ]);
     }
 

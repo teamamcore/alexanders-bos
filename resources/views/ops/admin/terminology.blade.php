@@ -51,6 +51,22 @@
                 </div>
             </form>
 
+            <form method="POST" action="{{ route('admin.appearance.update') }}" class="card p-6 text-sm">
+                @csrf
+                <div class="font-semibold text-slate-800 mb-1">Icon set <span class="card-note">· two complete sets, client-selectable</span></div>
+                <p class="text-slate-500 mb-3">Playful plumbing (restroom contacts, toilet-paper admin, water-meter invoices, pressure-gauge reports, sprinkler notifications…) or standard line icons.</p>
+                @php $current = \App\Models\Tenant::current()?->settings['icon_set'] ?? 'plumbing'; @endphp
+                <div class="grid sm:grid-cols-2 gap-3">
+                    @foreach (config('batsons.icon_sets') as $key => $label)
+                        <label class="rounded-xl border p-4 cursor-pointer {{ $current === $key ? 'border-brand-500 ring-2 ring-brand-200' : 'border-slate-200' }}">
+                            <div class="flex items-center justify-between"><span class="font-semibold text-slate-900">{{ $label }}</span><input type="radio" name="icon_set" value="{{ $key }}" @checked($current === $key) class="text-brand-700 focus:ring-brand-500"></div>
+                            <div class="mt-3 flex flex-wrap gap-3 text-slate-700">@foreach (['contacts', 'work_orders', 'schedule', 'invoices', 'reports', 'notifications', 'alerts', 'proposals', 'inventory', 'admin'] as $ic)<x-icon :name="$ic" :set="$key" class="h-6 w-6" />@endforeach</div>
+                        </label>
+                    @endforeach
+                </div>
+                <div class="mt-3"><x-secondary-button type="submit">Use this set</x-secondary-button></div>
+            </form>
+
             <div class="card p-6 text-sm text-slate-600">
                 <div class="font-semibold text-slate-800 mb-2">Preview</div>
                 <p>Menu: <span class="font-medium text-slate-900">{{ term('job', true) }}</span> · <span class="font-medium text-slate-900">{{ term('schedule') }}</span> · <span class="font-medium text-slate-900">{{ term('proposal', true) }}</span> · <span class="font-medium text-slate-900">{{ term('invoice', true) }}</span></p>
