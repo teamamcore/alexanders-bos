@@ -44,7 +44,16 @@ class BatsonsSeeder extends Seeder
             'email' => 'eric@batsonsplumbing.com',
             'password' => Hash::make('password'),
             'role' => Role::Administrator,
-        ]);
+        ])->forceFill(['email_verified_at' => now()])->save();
+
+        // AmCore support administrator (prototype access).
+        User::create([
+            'tenant_id' => $tenant->id,
+            'name' => 'David Conn',
+            'email' => 'david@amcoresystems.com',
+            'password' => Hash::make('password'),
+            'role' => Role::Administrator,
+        ])->forceFill(['email_verified_at' => now()])->save();
 
         // Equipment catalog from the configured types (SOW §3.2).
         foreach (config('batsons.equipment_types') as $type) {

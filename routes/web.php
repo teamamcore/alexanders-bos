@@ -10,7 +10,8 @@ use Livewire\Volt\Volt;
 Route::view('/', 'welcome');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', [OpsController::class, 'dashboard'])->middleware('verified')->name('dashboard');
+    // Prototype: no email-verification gate (re-add ->middleware('verified') for production).
+    Route::get('dashboard', [OpsController::class, 'dashboard'])->name('dashboard');
 
     // Modules 3.1/3.2/3.3 — Volt pages
     Volt::route('jobs', 'pages.jobs.index')->name('jobs.index');
