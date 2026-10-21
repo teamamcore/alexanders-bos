@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\WorkOrders;
 
+use App\Actions\Communication\NotifyCustomer;
 use App\Models\User;
 use App\Models\WorkOrder;
 use App\States\WorkOrder\NewWorkOrder;
@@ -30,6 +31,11 @@ final class ScheduleWorkOrder
             $workOrder->status->transitionTo(Scheduled::class);
         }
 
-        return $workOrder->refresh();
+        $workOrder->refresh();
+
+        // SOW §3.4 — customer receives the scheduled day (automatic, tenant switchable).
+        NotifyCustomer::run($workOrder, 'scheduled', null, [], true);
+
+        return $workOrder;
     }
 }

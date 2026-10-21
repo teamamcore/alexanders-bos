@@ -16,9 +16,15 @@ final class CreateJobFromIntake
 {
     use AsAction;
 
-    public function handle(string $customerName, string $jobTitle): Job
+    public function handle(string $customerName, string $jobTitle, ?string $phone = null, ?string $email = null): Job
     {
         $customer = Customer::firstOrCreate(['name' => trim($customerName)]);
+
+        // SOW §3.4 — capture how to reach them so scheduled-day / arrival updates can go out.
+        $contactInfo = array_filter(['phone' => trim((string) $phone) ?: null, 'email' => trim((string) $email) ?: null]);
+        if ($contactInfo !== []) {
+            $customer->fill(array_filter($contactInfo, fn ($v, $k) => empty($customer->{$k}), ARRAY_FILTER_USE_BOTH))->save();
+        }
 
         return Job::create([
             'customer_id' => $customer->id,

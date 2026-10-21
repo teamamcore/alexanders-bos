@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             SetCurrentTenant::class,
         ]);
         $middleware->prependToPriorityList(SubstituteBindings::class, SetCurrentTenant::class);
+        // Provider webhooks authenticate with a shared token, not a session.
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
         // Role guard alias (SOW §3.13).
         $middleware->alias([
             'role' => EnsureRole::class,

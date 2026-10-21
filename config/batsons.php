@@ -81,6 +81,35 @@ return [
     // Background check: status + date only (MSA Ex. B.2 / B.5(g)).
     'background_check_statuses' => ['not_started', 'pending', 'cleared', 'flagged', 'expired'],
 
+    // SOW §3.4 — customer communication. Platform default templates; tenant
+    // overrides live in message_templates (edit under Messages → Templates).
+    // Placeholders: {customer} {first_name} {company} {job} {job_number}
+    // {work_order} {date} {window} {tech} {address} {eta} {note}
+    'message_templates' => [
+        'scheduled' => ['name' => 'Scheduled day', 'channel' => 'sms', 'subject' => '{company}: your visit is scheduled for {date}',
+            'body' => 'Hi {first_name}, {company} has scheduled your {job} for {date} ({window}). Reply to this message with any questions.'],
+        'rescheduled' => ['name' => 'Rescheduled', 'channel' => 'sms', 'subject' => '{company}: your visit has moved to {date}',
+            'body' => 'Hi {first_name}, your {company} visit for {job} has moved to {date} ({window}). Sorry for the change — reply with any questions.'],
+        'on_the_way' => ['name' => 'On the way', 'channel' => 'sms', 'subject' => '{company}: {tech} is on the way',
+            'body' => '{tech} from {company} is on the way to {address}. {eta}'],
+        'arrived' => ['name' => 'Arrived', 'channel' => 'sms', 'subject' => '{company}: {tech} has arrived',
+            'body' => '{tech} from {company} has arrived at {address}.'],
+        'work_started' => ['name' => 'Work started', 'channel' => 'sms', 'subject' => '{company}: work has started',
+            'body' => '{company}: work has started on {job} ({work_order}).'],
+        'work_complete' => ['name' => 'Work complete', 'channel' => 'sms', 'subject' => '{company}: work complete',
+            'body' => '{company}: work on {job} is complete. Thank you! Your invoice will follow.'],
+        'status_update' => ['name' => 'Status update', 'channel' => 'sms', 'subject' => '{company}: update on {job}',
+            'body' => '{company} update on {job}: {note}'],
+        'instructions' => ['name' => 'Instructions', 'channel' => 'sms', 'subject' => '{company}: a note from your technician',
+            'body' => '{company}: {note}'],
+    ],
+    'message_placeholders' => [
+        'customer' => 'Customer name', 'first_name' => 'First word of the customer name', 'company' => 'Your company name',
+        'job' => 'Job title', 'job_number' => 'Job number', 'work_order' => 'Work order number', 'date' => 'Scheduled day',
+        'window' => 'Scheduling window', 'tech' => 'Assigned technician', 'address' => 'Service address',
+        'eta' => 'ETA text (on the way)', 'note' => 'Free text from the sender',
+    ],
+
     // SOW §3.7 — parts, equipment, fleet.
     'stock_adjustment_reasons' => [
         'used_on_job' => 'Used on job',

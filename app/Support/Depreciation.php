@@ -21,7 +21,7 @@ final class Depreciation
         }
 
         $annual = max(0.0, ($cost - $salvage) / $years);
-        $elapsedYears = min((float) $years, max(0.0, (float) $purchasedAt->diffInYears($asOf ?? now())));
+        $elapsedYears = min((float) $years, max(0.0, $purchasedAt->diffInYears($asOf ?? now())));
         $toDate = round($annual * $elapsedYears, 2);
 
         return [

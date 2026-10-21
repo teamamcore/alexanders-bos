@@ -80,6 +80,14 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
   straight-line depreciation (`App\Support\Depreciation`). Fleet: register,
   mileage readings + stale reminder, service intervals by miles/months, renewal
   alerts, costs by type, TCO. Photos go to the `public` disk.
+- **3.4 Customer Communication** — `/messages` (`MessagesController`, office/admin):
+  monitor of every text/email, compose, templates editor, auto-notify switch;
+  `/messages/calls` for call transcripts (office + field). `Platform/Messaging/*`
+  holds the swappable `SmsDriver` (log by default), `Messenger`, and
+  `TemplateRenderer` (config defaults + `message_templates` overrides, `{placeholders}`).
+  `NotifyCustomer` fires on schedule / reschedule / `StartWorkOrder` /
+  `CompleteWorkOrder`; field users send on-the-way, arrived and free text from the
+  job page. Inbound replies arrive at `POST /webhooks/sms` (shared token).
 - **Build checklist** — `/progress` mirrors the Notion Build Timeline from
   `config/build.php` (status, dates, notes, and a link to the live screen for each
   shipped module). Update it alongside Notion when a module ships.

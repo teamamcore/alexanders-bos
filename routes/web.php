@@ -6,9 +6,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuildController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FleetController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\OpsController;
 use App\Http\Controllers\PartsController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -87,6 +89,17 @@ Route::middleware(['auth'])->group(function () {
         Route::post('fleet/{vehicle}', [FleetController::class, 'update'])->name('fleet.update');
     });
 
+    // Module 3.4 — Customer Communication
+    Route::middleware('role:office,administrator')->group(function () {
+        Route::get('messages', [MessagesController::class, 'index'])->name('messages.index');
+        Route::post('messages', [MessagesController::class, 'send'])->name('messages.send');
+        Route::get('messages/templates', [MessagesController::class, 'templates'])->name('messages.templates');
+        Route::post('messages/templates/{key}', [MessagesController::class, 'updateTemplate'])->name('messages.templates.update');
+        Route::post('messages/auto-notify', [MessagesController::class, 'toggleAutoNotify'])->name('messages.autonotify');
+    });
+    Route::get('messages/calls', [MessagesController::class, 'calls'])->name('messages.calls');          // office + limited field
+    Route::post('messages/calls', [MessagesController::class, 'storeCall'])->name('messages.calls.store');
+
     // Build checklist (mirrors the Notion Build Timeline)
     Route::get('progress', [BuildController::class, 'index'])->name('build.index');
 
@@ -107,5 +120,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('qualifications', [AdminController::class, 'updateQualifications'])->name('qualifications.update');
     });
 });
+
+// Texting-platform webhook (token-protected, no session) — SOW §3.4.
+Route::post('webhooks/sms', [WebhookController::class, 'inboundSms'])->name('webhooks.sms');
 
 require __DIR__.'/auth.php';

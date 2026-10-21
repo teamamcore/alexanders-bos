@@ -26,6 +26,7 @@ new class extends Component
         ['route' => 'time.index',       'is' => 'time.*',      'label' => __('Time & Pay'),       'navigate' => false],
         ['route' => 'team.index',       'is' => 'team.*',      'label' => __('Team'),             'navigate' => false],
         ['route' => 'parts.index',      'is' => ['parts.*', 'equipment.*', 'fleet.*'], 'label' => __('Assets'), 'navigate' => false],
+        ['route' => auth()->user()->isField() ? 'messages.calls' : 'messages.index', 'is' => 'messages.*', 'label' => __('Messages'), 'navigate' => false],
         ['route' => 'build.index',      'is' => 'build.*',     'label' => __('Build'),            'navigate' => false],
     ];
     if (auth()->user()->isAdministrator()) {

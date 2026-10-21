@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\WorkOrders;
 
+use App\Actions\Communication\NotifyCustomer;
 use App\Models\ScheduleChange;
 use App\Models\WorkOrder;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -28,7 +29,11 @@ final class RescheduleWorkOrder
         ]);
 
         $workOrder->update(['scheduled_date' => $newDate]);
+        $workOrder->refresh();
 
-        return $workOrder->refresh();
+        // SOW §3.4 — optional customer notice on reschedule (automatic, tenant switchable).
+        NotifyCustomer::run($workOrder, 'rescheduled', null, [], true);
+
+        return $workOrder;
     }
 }

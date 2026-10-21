@@ -6,10 +6,12 @@ namespace App\Platform\Export;
 
 use App\Models\AssetIssue;
 use App\Models\AuditLog;
+use App\Models\CallTranscript;
 use App\Models\Certification;
 use App\Models\Contact;
 use App\Models\Crew;
 use App\Models\Customer;
+use App\Models\CustomerMessage;
 use App\Models\DeliveryCheck;
 use App\Models\Employee;
 use App\Models\EmployeeMilestone;
@@ -20,6 +22,7 @@ use App\Models\Gate;
 use App\Models\GateOverride;
 use App\Models\Invoice;
 use App\Models\Job;
+use App\Models\MessageTemplate;
 use App\Models\MileageReading;
 use App\Models\Part;
 use App\Models\Proposal;
@@ -90,6 +93,9 @@ class ClientExporter
         EquipmentUsage::class,
         MileageReading::class,
         AssetIssue::class,
+        MessageTemplate::class,
+        CustomerMessage::class,
+        CallTranscript::class,
         AuditLog::class,
     ];
 

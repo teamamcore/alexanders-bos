@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Equipment;
@@ -91,7 +92,10 @@ class BatsonsSeeder extends Seeder
             'required_actions' => ['photos', 'parts_entry', 'customer_sign_off']]);
 
         // A sample customer → site → job → work order so screens have data.
-        $customer = Customer::create(['name' => 'Acme Industrial Park', 'notes' => 'Net 30']);
+        $customer = Customer::create(['name' => 'Acme Industrial Park', 'notes' => 'Net 30',
+            'phone' => '(555) 214-7788', 'email' => 'facilities@acme-industrial.example']);
+        Contact::create(['customer_id' => $customer->id, 'name' => 'Pat Morales', 'role' => 'Facilities manager',
+            'phone' => '(555) 214-7790', 'email' => 'pat.morales@acme-industrial.example']);
         $site = ServiceLocation::create([
             'customer_id' => $customer->id,
             'label' => 'Building C',

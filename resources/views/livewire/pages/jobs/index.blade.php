@@ -8,6 +8,8 @@ use Livewire\Volt\Component;
 new #[Layout('layouts.app')] class extends Component
 {
     public string $customer_name = '';
+    public string $customer_phone = '';
+    public string $customer_email = '';
     public string $job_title = '';
 
     public function with(): array
@@ -22,13 +24,15 @@ new #[Layout('layouts.app')] class extends Component
     {
         $validated = $this->validate([
             'customer_name' => ['required', 'string', 'max:255'],
+            'customer_phone' => ['nullable', 'string', 'max:40'],
+            'customer_email' => ['nullable', 'email', 'max:255'],
             'job_title' => ['required', 'string', 'max:255'],
         ]);
 
         // Intake (SOW §3.1 → §3.2): find/create customer, open a job.
-        $job = CreateJobFromIntake::run($validated['customer_name'], $validated['job_title']);
+        $job = CreateJobFromIntake::run($validated['customer_name'], $validated['job_title'], $validated['customer_phone'] ?: null, $validated['customer_email'] ?: null);
 
-        $this->reset('customer_name', 'job_title');
+        $this->reset('customer_name', 'customer_phone', 'customer_email', 'job_title');
         $this->redirectRoute('jobs.show', $job, navigate: true);
     }
 }; ?>
@@ -42,11 +46,21 @@ new #[Layout('layouts.app')] class extends Component
         {{-- Intake form --}}
         <div class="card p-6">
             <h3 class="font-semibold text-slate-900 mb-4">New job</h3>
-            <form wire:submit="createJob" class="grid gap-4 sm:grid-cols-3 sm:items-end">
+            <form wire:submit="createJob" class="grid gap-4 sm:grid-cols-5 sm:items-end">
                 <div>
                     <x-input-label for="customer_name" :value="__('Customer')" />
                     <x-text-input wire:model="customer_name" id="customer_name" class="block mt-1 w-full" placeholder="Acme Industrial" />
                     <x-input-error :messages="$errors->get('customer_name')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="customer_phone" :value="__('Mobile (for texts)')" />
+                    <x-text-input wire:model="customer_phone" id="customer_phone" class="block mt-1 w-full" placeholder="555-201-3344" />
+                    <x-input-error :messages="$errors->get('customer_phone')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="customer_email" :value="__('Email')" />
+                    <x-text-input wire:model="customer_email" id="customer_email" type="email" class="block mt-1 w-full" placeholder="office@acme.com" />
+                    <x-input-error :messages="$errors->get('customer_email')" class="mt-2" />
                 </div>
                 <div>
                     <x-input-label for="job_title" :value="__('Job title')" />
