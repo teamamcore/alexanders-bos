@@ -14,7 +14,7 @@ final class MoveProposalStage
     use AsAction;
 
     /** @var array<string, list<string>> */
-    private const TRANSITIONS = [
+    private const array TRANSITIONS = [
         'draft' => ['sent', 'lost'],
         'sent' => ['follow_up', 'won', 'lost'],
         'follow_up' => ['sent', 'won', 'lost'],

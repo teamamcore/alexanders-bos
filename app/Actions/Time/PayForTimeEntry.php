@@ -19,7 +19,7 @@ final class PayForTimeEntry
     public function handle(TimeEntry $entry): array
     {
         $hours = ($entry->started_at && $entry->ended_at)
-            ? round((float) $entry->started_at->floatDiffInHours($entry->ended_at), 2)
+            ? round((float) $entry->started_at->diffInHours($entry->ended_at), 2)
             : 0.0;
 
         $pay = CalculatePay::run($entry->started_at ?? now());

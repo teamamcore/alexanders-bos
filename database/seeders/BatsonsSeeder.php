@@ -28,6 +28,7 @@ class BatsonsSeeder extends Seeder
             'name' => 'Batsons Plumbing, Inc.',
             'trade' => 'Plumbing — commercial, industrial, institutional, residential (T&M)',
             'settings' => [
+                'client_key' => 'batsons', // → config/clients/batsons.php, app/Client/Batsons
                 'included_users' => config('batsons.included_users'),
                 'pay_rules' => config('batsons.pay_rules'),
             ],

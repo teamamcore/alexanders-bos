@@ -49,6 +49,17 @@ fleet, time, team/qualifications, reminders, vendor portals). See migrations in
 - **3.3 Scheduling & Dispatch** — dispatch board `pages/schedule/index`;
   `ScheduleWorkOrder` (new → scheduled) and `RescheduleWorkOrder` (records
   `schedule_changes` history); field users already scoped to their own work.
+- **3.5 Proposals & Estimating** — pipeline draft→sent→follow_up→won/lost;
+  `ConvertProposalToJob` creates the job + first work order.
+- **3.6 Invoicing** — `GenerateInvoiceFromWorkOrder`, progress payments,
+  approve/void/mark-paid, `SyncInvoiceToQuickBooks` (status-only; no card data).
+- **3.8 Time & Pay** — `ClockIn`/`ClockOut`, `AdjustTimeEntry`, `CalculatePay`
+  pay-rule engine (business hours, OT multipliers from `tenants.settings.pay_rules`).
+
+## Platform / Client seam
+`php artisan client:export {client}` and `client:fork {source} {name}` — see
+`ARCHITECTURE.md`. Everything client-owned lives in `config/clients/<key>.php`,
+`app/Client/<Studly>/` and tenant-scoped rows; the platform core is never exported.
 
 ## Testing
 Pest, functional style only. Tenant context is set with

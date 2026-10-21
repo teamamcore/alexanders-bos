@@ -17,9 +17,9 @@ final class CalculatePay
 {
     use AsAction;
 
-    public const BUSINESS_START = '07:00';
+    public const string BUSINESS_START = '07:00';
 
-    public const BUSINESS_END = '17:00';
+    public const string BUSINESS_END = '17:00';
 
     /** @return array{multiplier: float, classification: string} */
     public function handle(Carbon $start): array

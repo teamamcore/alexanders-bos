@@ -15,7 +15,7 @@ final class AdjustTimeEntry
 {
     use AsAction;
 
-    private const ADJUSTABLE = ['started_at', 'ended_at', 'category', 'billable'];
+    private const array ADJUSTABLE = ['started_at', 'ended_at', 'category', 'billable'];
 
     /** @param  array<string, mixed>  $changes */
     public function handle(TimeEntry $entry, array $changes, int $adjustedBy): TimeEntry

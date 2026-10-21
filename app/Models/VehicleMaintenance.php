@@ -10,6 +10,8 @@ class VehicleMaintenance extends Model
 {
     use BelongsToTenant;
 
+    protected $table = 'vehicle_maintenance';
+
     protected $guarded = [];
 
     protected $casts = ['performed_at' => 'date', 'cost' => 'decimal:2'];
