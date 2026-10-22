@@ -67,7 +67,8 @@ if (! function_exists('bos_nav')) {
         return [
             ['label' => 'Operate', 'items' => [
                 ['route' => 'dashboard', 'is' => ['dashboard'], 'label' => 'Dashboard', 'icon' => 'dashboard', 'show' => true, 'badge' => $pendingScope ?: null],
-                ['route' => 'work-orders.index', 'is' => ['work-orders.*', 'jobs.*'], 'label' => term('work_order', true), 'icon' => 'work_orders', 'show' => true],
+                ['route' => 'jobs.index', 'is' => ['jobs.*'], 'label' => term('job', true), 'icon' => 'jobs', 'show' => ! $field],
+                ['route' => 'work-orders.index', 'is' => ['work-orders.*'], 'label' => term('work_order', true), 'icon' => 'work_orders', 'show' => true],
                 ['route' => 'schedule.index', 'is' => ['schedule.*'], 'label' => term('schedule'), 'icon' => 'schedule', 'show' => true],
                 ['route' => 'contacts.index', 'is' => ['contacts.*'], 'label' => 'Contacts', 'icon' => 'contacts', 'show' => ! $field],
                 ['route' => 'proposals.index', 'is' => ['proposals.*'], 'label' => term('proposal', true), 'icon' => 'proposals', 'show' => ! $field],
