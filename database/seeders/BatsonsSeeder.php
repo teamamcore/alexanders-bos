@@ -49,12 +49,15 @@ class BatsonsSeeder extends Seeder
         // Bind the tenant so BelongsToTenant auto-fills tenant_id below.
         app()->instance('currentTenantId', $tenant->id);
 
+        // Staging deploys set SEED_USER_PASSWORD so demo logins aren't guessable.
+        $password = Hash::make((string) env('SEED_USER_PASSWORD', 'password'));
+
         // Administrator user (SOW §9 — Eric White, project lead).
         User::create([
             'tenant_id' => $tenant->id,
             'name' => 'Eric White',
             'email' => 'eric@batsonsplumbing.com',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => Role::Administrator,
         ])->forceFill(['email_verified_at' => now()])->save();
 
@@ -63,7 +66,7 @@ class BatsonsSeeder extends Seeder
             'tenant_id' => $tenant->id,
             'name' => 'David Conn',
             'email' => 'david@amcoresystems.com',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => Role::Administrator,
         ])->forceFill(['email_verified_at' => now()])->save();
 
@@ -158,12 +161,12 @@ class BatsonsSeeder extends Seeder
         // so the dispatch board indicators have something to show.
         $marcus = User::create([
             'tenant_id' => $tenant->id, 'name' => 'Marcus Reyes', 'email' => 'marcus@batsonsplumbing.com',
-            'password' => Hash::make('password'), 'role' => Role::Field,
+            'password' => $password, 'role' => Role::Field,
         ]);
         $marcus->forceFill(['email_verified_at' => now()])->save();
         $dana = User::create([
             'tenant_id' => $tenant->id, 'name' => 'Dana Whitfield', 'email' => 'dana@batsonsplumbing.com',
-            'password' => Hash::make('password'), 'role' => Role::Field,
+            'password' => $password, 'role' => Role::Field,
         ]);
         $dana->forceFill(['email_verified_at' => now()])->save();
 
