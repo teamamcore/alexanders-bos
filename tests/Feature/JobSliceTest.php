@@ -45,6 +45,20 @@ it('creates a customer and job from intake', function () {
     expect($job->customer->name)->toBe('Acme Industrial');
 });
 
+it('renders the job parent view with comms, children and billables for the office', function () {
+    actingAdmin();
+    $customer = Customer::create(['name' => 'Acme']);
+    $job = Job::create(['customer_id' => $customer->id, 'title' => 'Repipe', 'status' => 'open']);
+    $job->workOrders()->create(['tenant_id' => $job->tenant_id, 'number' => 'WO-9001', 'schedule_window' => 'morning']);
+
+    $this->get(route('jobs.show', $job))
+        ->assertOk()
+        ->assertSee('WO-9001')
+        ->assertSee('Comms · whole job')
+        ->assertSee('Billables · whole job')
+        ->assertSee('Activity · whole job');
+});
+
 it('adds a work order to a job', function () {
     [$tenant] = actingAdmin();
     $customer = Customer::create(['name' => 'Acme']);
